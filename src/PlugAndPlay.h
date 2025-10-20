@@ -7,7 +7,7 @@
 	#include "Project_Config.h"
 #endif
 
-#include "../EventBasedFramework/EBF.h"
+#include "../../EventBasedFramework/EBF.h"
 
 #include "Core/PnP_StatusLed.h"
 #include "Core/PnP_Serial.h"
