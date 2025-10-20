@@ -28,10 +28,15 @@ The PlugAndPlay is listed in the library managers of both platforms. You can ins
 ### Arduino IDE
 In Arduino IDE, go to **Tools** > **Manage Libraries...** menu. Wait few seconds for the **Library Manager** window to open with the list of all available libraries.
 
-Type `PlugAndPlay` in the **Filter your search...** field. The list will show matching libraries for that search, in our case:
-![PnP - Plug-n-Play system for Arduino](images/arduino-ide-library-manager.png)
+Type `PlugAndPlay` in the **Filter your search...** field. The list will show matching libraries for that search, in our case:\
+![PnP - Plug-n-Play library installation in Arduino IDE](images/arduino-ide-library-manager.png)
 
 Press the **Install** button to install the Plug-n-Play library.
+
+The IDE will show a popup window, asking if you would like to install additional libraries that Plug-n-Play is depended on (such as EventBasedFramework):\
+![PnP - Plug-n-Play library dependency installation in Arduino IDE](images/arduino-ide-install-dependencies.png)
+
+Press **INSTALL ALL** in order to install all the dependencies.
 
 After the installation, you will find multiple examples in the Arduino's IDE **File** > **Examples** > **PlugAndPlay** menu. You might need to scroll down the list in the **Examples** menu to find the **PlugAndPlay** entry.
 
@@ -40,12 +45,12 @@ Library installed using that method is available for all the projects on that co
 ### PlatformIO
 Click the "Alien" icon to get to the PlatformIO menus. Click on the **Libraries** icon and type `PlugAndPlay` in the **Search libraries...** field in the Libraries Registry screen.\
 Click on the magnifier glass icon to perform the search or press Enter.\
-The list show the **PlugAndPlay** entry and possible other libraries with similar name as well. Click on it's blue name:
+The list show the **PlugAndPlay** entry and possible other libraries with similar name as well. Click on it's blue name:\
 ![PlugAndPlay in PlatformIO Library Registry](images/platformio-libraries-registry.png)
 
 The screen will show the selected library information with examples and some code.\
 You will see the latest version of the library (you can change what version to install). Press the **Add to Project** button.\
-Another window will open showing the selected version in the first field and ask you to select the project where you would like to add the PlugAndPlay library.
+Another window will open showing the selected version in the first field and ask you to select the project where you would like to add the PlugAndPlay library.\
 ![PlugAndPlay add to PlatformIO project](images/platformio-add-library.png)
 
 Click the **Add** button to complete the installation.
