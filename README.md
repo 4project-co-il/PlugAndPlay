@@ -3,7 +3,7 @@ Plug-n-Play is a combination of hardware and software (this library) in the Ardu
 
 The system allows concentrating on the software part of the project and cancel almost entirely the hardware part, the electronics, connections configuration etc.
 
-The Plug-n-Play library is based on the EBF - Event Based Framework library [link](https://github.com/4project-co-il/EBF), allowing writing the code for your project with easy, mixing different code exaples without struggle (try combining Arduino's blink and reading a button examples and you'll know what I mean), faster development while concentrating on the project's logic instead on the environment.
+The Plug-n-Play library is based on the EBF - Event Based Framework library ([link](https://github.com/4project-co-il/EBF)), allowing writing the code for your project with easy, mixing different code exaples without struggle (try combining Arduino's blink and reading a button examples and you'll know what I mean), faster development while concentrating on the project's logic instead on the environment.
 
 The Plug-n-Play system (both hardware and software) solves several problems:
 * Zero soldering. Tightening a screw is the maximum needed.
@@ -31,7 +31,7 @@ In Arduino IDE, go to **Tools** > **Manage Libraries...** menu. Wait few seconds
 Type `PlugAndPlay` in the **Filter your search...** field. The list will show matching libraries for that search, in our case:
 ![PnP - Plug-n-Play system for Arduino](images/arduino-ide-library-manager.png)
 
-Press the **Install** button to install the EBF library.
+Press the **Install** button to install the Plug-n-Play library.
 
 After the installation, you will find multiple examples in the Arduino's IDE **File** > **Examples** > **PlugAndPlay** menu. You might need to scroll down the list in the **Examples** menu to find the **PlugAndPlay** entry.
 
@@ -45,19 +45,19 @@ The list show the **PlugAndPlay** entry and possible other libraries with simila
 
 The screen will show the selected library information with examples and some code.\
 You will see the latest version of the library (you can change what version to install). Press the **Add to Project** button.\
-Another window will open showing the selected version in the first field and ask you to select the project where you would like to add the EventBasedFramework library.
+Another window will open showing the selected version in the first field and ask you to select the project where you would like to add the PlugAndPlay library.
 ![PlugAndPlay add to PlatformIO project](images/platformio-add-library.png)
 
 Click the **Add** button to complete the installation.
 
-In PlatformIO there is a separation between the projects, so the EBF library will be installed to a specific project only.
+In PlatformIO there is a separation between the projects, so the Plug-n-Play library will be installed to a specific project only.
 
-You can start using the examples for the EBF after the installation.\
+You can start using the examples for the PnP after the installation.\
 Pay attention that all the examples are with `.ino` extension file, as required in Arduino IDE.\
 You can simply copy and paste the relevant pieces of code to your `main.cpp` file, or other `.cpp` file in your project's `src` directory.
 
 ## Manual installation
-Manual installation of the EBF library to both Arduino IDE and PlatformIO environments is similar. Download this repository content as a ZIP file (Click on the green "<> Code" button on the top of GitHub's page and "Download ZIP" from the menu),
+Manual installation of the Plug-n-Play library to both Arduino IDE and PlatformIO environments is similar. Download this repository content as a ZIP file (Click on the green "<> Code" button on the top of GitHub's page and "Download ZIP" from the menu),
 and extract the ZIP content into your environment's library directory. Change the extracted directory name from "PlugAndPlay-master" to "PlugAndPlay" or "PnP" to make it more readable.
 
 For **PlatformIO** on Linux system:
