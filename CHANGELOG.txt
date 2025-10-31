@@ -1,3 +1,6 @@
+Version 0.1.1/0.1.2
+	Fix compilation paths.
+
 Version 0.1.0
 	Adding GetEventIndex() function that allows using the same callback for multiple port modules such as buttons, inputs and so on.
 	PnP_Module_Seeed_Monochrome_GROVE_16x2_LCD implementation.
