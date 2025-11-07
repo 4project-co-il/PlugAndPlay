@@ -40,7 +40,7 @@ uint8_t PnP_PlugAndPlayHub::Init(PnP_PlugAndPlayHub *pParentHub, uint8_t parentP
 	// Fix type and ID after the EBF_Instance init
 	this->type = HAL_Type::PnP_DEVICE;
 	this->id = deviceInfo.deviceIDs[0];
-	this->pollIntervalMs = EBF_NO_POLLING;	// No polling is needed for HUBs
+	this->SetPollingInterval(EBF_NO_POLLING);	// No polling is needed for HUBs
 
 	// Allocate pointers to HAL instances. Will be used to pass the interrrupts to connected instances
 	// Allocate port info structure. HAL pointer will be used to pass the interrrupts to connected instances

@@ -14,7 +14,7 @@ uint8_t PnP_UART::Init(uint32_t boudRate, uint16_t config)
 	rc = EBF_Serial::Init(1, EBF_EmptyCallback, boudRate, config);
 
 	// No polling by default. Users can change if Rx processing callback is needed
-	pollIntervalMs = EBF_NO_POLLING;
+	SetPollingInterval(EBF_NO_POLLING);
 
 	return rc;
 }

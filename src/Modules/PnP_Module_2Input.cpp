@@ -40,7 +40,7 @@ uint8_t PnP_Module_2Input::Init()
 	}
 
 	// PnP is interrupt driven, no polling is needed
-	this->pollIntervalMs = EBF_NO_POLLING;
+	this->SetPollingInterval(EBF_NO_POLLING);
 
 	// Attach interrupt lines for that device
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);

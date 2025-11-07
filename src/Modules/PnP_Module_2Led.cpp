@@ -35,7 +35,7 @@ uint8_t PnP_Module_2Led::Init()
 	}
 
 	// PnP is interrupt driven, no polling is needed
-	this->pollIntervalMs = EBF_NO_POLLING;
+	this->SetPollingInterval(EBF_NO_POLLING);
 
 	// Attach interrupt lines for that device
 	// Current device don't produce interrupts, but all the initializations are done in AssignInterruptLines
@@ -52,7 +52,7 @@ uint8_t PnP_Module_2Led::Process()
 {
 	// Nothing to do
 	// No polling needed
-	pollIntervalMs = EBF_NO_POLLING;
+	SetPollingInterval(EBF_NO_POLLING);
 
 	return EBF_OK;
 }

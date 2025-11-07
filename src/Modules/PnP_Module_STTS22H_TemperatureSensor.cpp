@@ -34,7 +34,7 @@ uint8_t PnP_Module_STTS22H_TemperatureSensor::Init()
 	this->type = HAL_Type::PnP_DEVICE;
 	this->id = PnP_DeviceId::PNP_ID_STTS22H_TEMPERATURE_SENSOR;
 	// PnP is interrupt driven, no polling is needed
-	this->pollIntervalMs = EBF_NO_POLLING;
+	this->SetPollingInterval(EBF_NO_POLLING);
 
 	// Attach interrupt lines for that device
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);

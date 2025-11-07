@@ -16,7 +16,7 @@ uint8_t PnP_SPI::Init()
 	rc = EBF_SPI::Init();
 
 	// No polling by default. Users can change if Rx processing callback is needed
-	pollIntervalMs = EBF_NO_POLLING;
+	SetPollingInterval(EBF_NO_POLLING);
 
 	return rc;
 }
