@@ -29,6 +29,9 @@ class PnP_ButtonInterface : public PnP_InputInterface {
 		void SetOnLongPress(EBF_CallbackType onLongPressCallback) { this->onLongPressCallback = onLongPressCallback; }
 #endif
 
+		// Returns 1 when the button is pressed, 0 when released
+		uint8_t IsPressed() { return (state == ButtonState::BUTTON_STATE_PRESSED) ? 1 : 0; }
+
 	protected:
 		EBF_CallbackType onPressCallback;
 		EBF_CallbackType onLongPressCallback;
