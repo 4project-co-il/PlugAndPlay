@@ -10,6 +10,10 @@
 // EBF - Event Based Framework is the engine behind the Plug-n-Play processing
 EBF_Core EBF;
 
+// Timer objects
+EBF_Timer printTimer;
+EBF_Timer clearTimer;
+
 // Serial interface via the USB connection. Use IDE Serial Monitor to see the printouts.
 // In this example the serial interface is used for EBF error reporting, so it's advised to always
 // have it initialized for debugging
@@ -25,13 +29,6 @@ PnP_Module_SparkFun_QWIIC_SerLCD lcd;
 // STTS22H temperature sensor module
 PnP_Module_STTS22H_TemperatureSensor tempSensor;
 
-enum {
-	PRINT_TIMER = 0,
-	CLEAR_TIMER,
-
-	NUMBER_OF_TIMERS
-};
-
 // This function will be called when PRINT_TIMER expires
 void onPrintTimer()
 {
@@ -45,10 +42,10 @@ void onPrintTimer()
 	lcd.print(str);
 
 	// Print the measurement to serial as well
-	//serial.println(str);
+	serial.println(str);
 
 	// Timers are always one-shot, restart it for the next print
-	EBF.StartTimer(PRINT_TIMER);
+	printTimer.Start();
 }
 
 // This function will be called when CLEAR_TIMER expires
@@ -86,7 +83,7 @@ void onHighTemp()
 	// it will be restarted before it will get to the expiration time.
 	// The clear timer callback will execute only when the temperature will get below the
 	// configured threshold
-	EBF.RestartTimer(CLEAR_TIMER);
+	clearTimer.Restart();
 }
 
 // All the setup should be done in that function
@@ -99,21 +96,21 @@ void setup()
 	EBF.SetErrorHandlerSerial(serial);
 
 	// EBF is the first thing that should be initialized
-	// Second parameter specifies number of queue entries that are used to pass interrupt calls to normal run
-	EBF.Init(NUMBER_OF_TIMERS, 16);
+	// The parameter specifies number of queue entries that are used to pass interrupt calls to normal run
+	EBF.Init(16);
 
 	// Initialize the status led
 	led.Init();
 
 	// Initialize the print timer to 1 seconds
-	EBF.InitTimer(PRINT_TIMER, onPrintTimer, 1000);
+	printTimer.Init(onPrintTimer, 1000);
 	// Start the timer
-	EBF.StartTimer(PRINT_TIMER);
+	printTimer.Start();
 
 	// Initialize the alarm timer to 3 seconds, which will be restarted every time the high temperature alarm will be executed
 	// Since the timeout is longer than the measurement time (1 second), the timer will never expire, unless the temeprature
 	// will not go back under the threshold, so clear timer could finish its counting and call for the onClearTimer callback
-	EBF.InitTimer(CLEAR_TIMER, onClearTimer, 3000);
+	clearTimer.Init(onClearTimer, 3000);
 
 	// Initialize serial interface object
 	serial.Init();

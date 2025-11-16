@@ -2,7 +2,7 @@
 #include "PlugAndPlay.h"
 
 // This is an example for basic Plug-n-Play code strucure
-// This will initialize 2 timers with different intervals.
+// The code will initialize 2 timers with different intervals.
 // One timer will print a counter value to the serial interface
 // Another timer will utilize LED's internal Blink() functionality
 // for fast blinking during 1 second and slow blinking during next second
@@ -11,6 +11,10 @@
 // EBF - Event Based Framework is the engine behind the Plug-n-Play processing
 EBF_Core EBF;
 
+// Timer objects
+EBF_Timer ledTimer;
+EBF_Timer printTimer;
+
 // Serial interface via the USB connection. Use IDE Serial Monitor to see the printouts.
 // In this example the serial interface is used for EBF error reporting, so it's advised to always
 // have it initialized for debugging
@@ -18,14 +22,6 @@ PnP_Serial serial;
 
 // Status LED on the development board
 PnP_StatusLed led;
-
-// Timers enumeration
-enum {
-	LED_TIMER = 0,
-	PRINT_TIMER,
-
-	NUMBER_OF_TIMERS
-};
 
 bool fastBlink = false;
 
@@ -45,7 +41,7 @@ void onLedTimer()
 	fastBlink = !fastBlink;
 
 	// Timers are one-shot by default. Start it again for next run
-	EBF.StartTimer(LED_TIMER);
+	ledTimer.Start();
 }
 
 int counter = 0;
@@ -60,7 +56,7 @@ void onPrintTimer()
 	counter++;
 
 	// Timers are one-shot by default. Start it again for next print
-	EBF.StartTimer(PRINT_TIMER);
+	printTimer.Start();
 }
 
 // All the setup should be done in that function
@@ -73,12 +69,11 @@ void setup()
 	EBF.SetErrorHandlerSerial(serial);
 
 	// EBF is the first thing that should be initialized, with the maximum timers to be used
-	// First parameter is the number of timers for that program.
-	// Second parameter specifies how many interrupt events can be queued in transition
+	// The parameter specifies how many interrupt events can be queued in transition
 	// between the interrupt execution (ISR) and the normal run loop.
 	// For light applications without fast events and long execution, number 4 might be enough.
 	// For applications with fast burst of events, or long execution for some of them, might need a larger number
-	EBF.Init(NUMBER_OF_TIMERS, 16);
+	EBF.Init(16);
 
 	// Initialize serial interface object
 	serial.Init();
@@ -88,15 +83,15 @@ void setup()
 
 	// Initialize the LED_TIMER to 1000mSec (1 second)
 	// The onLedTimer function will be called every time the LED_TIMER expires
-	EBF.InitTimer(LED_TIMER, onLedTimer, 1000);
+	ledTimer.Init(onLedTimer, 1000);
 	// Start the timer
-	EBF.StartTimer(LED_TIMER);
+	ledTimer.Start();
 
 	// Initialize the PRINT_TIMER to 3000mSec (3 seconds)
 	// The onPrintTimer function will be called every time the PRINT_TIMER expires
-	EBF.InitTimer(PRINT_TIMER, onPrintTimer, 3000);
+	printTimer.Init(onPrintTimer, 3000);
 	// Start the timer
-	EBF.StartTimer(PRINT_TIMER);
+	printTimer.Start();
 
 	serial.println("Starting...");
 }

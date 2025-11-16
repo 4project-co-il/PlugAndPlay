@@ -8,6 +8,11 @@
 // EBF - Event Based Framework is the engine behind the Plug-n-Play processing
 EBF_Core EBF;
 
+// Timers objects
+EBF_Timer clearRow0Timer;
+EBF_Timer clearRow1Timer;
+EBF_Timer lightsOffTimer;
+
 // Serial interface via the USB connection. Use IDE Serial Monitor to see the printouts.
 // In this example the serial interface is used for EBF error reporting, so it's advised to always
 // have it initialized for debugging
@@ -23,13 +28,6 @@ PnP_Module_2ButtonsInput buttonsModule;
 // Buttons interface is used to receive buttons implementation
 PnP_ButtonInterface buttons[2];
 
-enum {
-	TIMER_CLEAR_ROW0 = 0,
-	TIMER_CLEAR_ROW1,
-	TIMER_LIGHTS_OFF,
-
-	NUMBER_OF_TIMERS
-};
 
 // This function will be called when a button is pressed
 void onButtonPress()
@@ -54,16 +52,16 @@ void onButtonPress()
 		// Set green background for button 0
 		lcd.SetBacklight(0, 0xFF, 0);
 
-		EBF.RestartTimer(TIMER_CLEAR_ROW0);
+		clearRow0Timer.Restart();
 	} else {
 		// Set blue background for button 1
 		lcd.SetBacklight(0, 0, 0xFF);
 
-		EBF.RestartTimer(TIMER_CLEAR_ROW1);
+		clearRow1Timer.Restart();
 	}
 
 	// Stop the shutdown timer when a button is pressed
-	EBF.StopTimer(TIMER_LIGHTS_OFF);
+	lightsOffTimer.Stop();
 }
 
 // This function will be called when a button is released
@@ -89,15 +87,15 @@ void onButtonRelease()
 
 	// Clear the relevant row after the timer value
 	if (pCurrentButton->GetUserData() == 0) {
-		EBF.RestartTimer(TIMER_CLEAR_ROW0);
+		clearRow0Timer.Restart();
 	} else {
-		EBF.RestartTimer(TIMER_CLEAR_ROW1);
+		clearRow1Timer.Restart();
 	}
 
 	// Buttons are working
 	if (buttons[0].IsPressed() == 0 && buttons[1].IsPressed() == 0) {
 		// Shutdown the lights if both buttons are released
-		EBF.RestartTimer(TIMER_LIGHTS_OFF);
+		lightsOffTimer.Restart();
 	}
 }
 
@@ -124,9 +122,9 @@ void onButtonLong()
 
 	// Clear the relevant row after the timer value
 	if (pCurrentButton->GetUserData() == 0) {
-		EBF.RestartTimer(TIMER_CLEAR_ROW0);
+		clearRow0Timer.Restart();
 	} else {
-		EBF.RestartTimer(TIMER_CLEAR_ROW1);
+		clearRow1Timer.Restart();
 	}
 }
 
@@ -169,16 +167,16 @@ void setup()
 	EBF.SetErrorHandlerSerial(serial);
 
 	// EBF is the first thing that should be initialized
-	// Second parameter specifies number of queue entries that are used to pass interrupt calls to normal run
-	EBF.Init(NUMBER_OF_TIMERS, 16);
+	// The parameter specifies number of queue entries that are used to pass interrupt calls to normal run
+	EBF.Init(16);
 
 	// Initialize the clear timers to 1 seconds each.
 	// In this example the timers are re-initialized after every button event to clear the relevant row on the LCD
 	// meaning they are stopped and started again for the set timeout
-	EBF.InitTimer(TIMER_CLEAR_ROW0, onClearRow0Timer, 1000);
-	EBF.InitTimer(TIMER_CLEAR_ROW1, onClearRow1Timer, 1000);
+	clearRow0Timer.Init(onClearRow0Timer, 1000);
+	clearRow1Timer.Init(onClearRow1Timer, 1000);
 	// Lights off timer is longer than the others, so the printing and cleaning event will be visible before it happens
-	EBF.InitTimer(TIMER_LIGHTS_OFF, onLightsOffTimer, 10000);
+	lightsOffTimer.Init(onLightsOffTimer, 10000);
 
 	// Initialize serial interface object
 	serial.Init();
