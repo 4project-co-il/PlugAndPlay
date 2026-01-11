@@ -79,7 +79,7 @@ uint8_t PnP_PlugAndPlayManager::Init()
 	}
 
 	// Read the configuration of the main hub
-	// Devices are considered as level 0, main hub - level 3, extender hubs - levels 4,5,6,7
+	// Devices are considered as level 0, main hub - level 1, extender hubs - levels 2,3
 	// Controller I2C interface is specified in variants.h
 	rc = GetDeviceInfo(pnpI2CArr[PNP_CONTROLLER_INTERNAL_I2C_INTERFACE_INDEX], deviceInfo, PNP_EEPROM_MAIN_HUB);
 	if (rc != EBF_OK) {

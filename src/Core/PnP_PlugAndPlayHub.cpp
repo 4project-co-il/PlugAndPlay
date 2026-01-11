@@ -24,10 +24,10 @@ uint8_t PnP_PlugAndPlayHub::Init(PnP_PlugAndPlayHub *pParentHub, uint8_t parentP
 	this->parentPortNumber = parentPort;
 
 	if (pParentHub == NULL) {
-		// Main HUBs will be level 3
-		routingLevel = 3;
+		// Main HUBs will be level 1
+		routingLevel = PnP_PlugAndPlayManager::PNP_EEPROM_MAIN_HUB;
 	} else {
-		// Generic HUBs will be levels 4,5,6,7
+		// Generic HUBs will be on the next levels (2,3)
 		routingLevel = pParentHub->routingLevel + 1;
 	}
 

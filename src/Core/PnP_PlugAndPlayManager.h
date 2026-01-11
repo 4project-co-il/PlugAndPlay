@@ -66,8 +66,8 @@ class PnP_PlugAndPlayManager {
 	public:
 		enum PnP_PnPEepromAddress {
 			PNP_EEPROM_DEVICE = 0,			// Devices are always 0
-			PNP_EEPROM_MAIN_HUB = 3,
-			PNP_EEPROM_EXTENDER_HUB = 4,	// Extenders are 4,5,6,7
+			PNP_EEPROM_MAIN_HUB = 1,
+			PNP_EEPROM_EXTENDER_HUB = 2,	// Extenders are 2,3
 		};
 };
 
