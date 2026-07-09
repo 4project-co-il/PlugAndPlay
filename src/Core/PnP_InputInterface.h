@@ -11,11 +11,11 @@
 #include "../../../EventBasedFramework/src/Core/EBF_Core.h"
 #include "../../../EventBasedFramework/src/Core/EBF_Logic.h"
 #include "PnP_InputInterfaceProvider.h"
-#include "../Modules/PnP_Module_2ButtonsInput.h"
+#include "../Modules/PnP_Module_2Input.h"
 
 class PnP_InputInterface {
 	public:
-		friend class PnP_Module_2ButtonsInput;
+		friend class PnP_Module_2Input;
 
 		PnP_InputInterface();
 

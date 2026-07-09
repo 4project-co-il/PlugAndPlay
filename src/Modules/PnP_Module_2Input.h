@@ -12,21 +12,47 @@
 #include "../../../EventBasedFramework/src/Core/EBF_Logic.h"
 #include "../Core/PnP_PlugAndPlayDevice.h"
 #include "../Core/PnP_PlugAndPlayI2C.h"
+#include "../Core/PnP_InputInterface.h"
+#include "../Core/PnP_InputInterfaceProvider.h"
 
-class PnP_Module_2Input : protected EBF_HalInstance {
+class PnP_Module_2Input : protected EBF_HalInstance, public PnP_InputInterfaceProvider {
 	private:
 		EBF_DEBUG_MODULE_NAME("PnP_Module_2Input");
 
 	public:
 		PnP_Module_2Input();
 
+		static const uint8_t numberOfInputs = 2;
+
 		uint8_t Init();
 
 		uint8_t GetValue(uint8_t index);
 		uint8_t GetValue();
+		uint8_t GetLastValue(uint8_t index);
+		PnP_InputInterface* GetCurrentInterface();
 
-		void SetOnChange1(EBF_CallbackType onChangeCallback) { this->onChangeCallback1 = onChangeCallback; }
-		void SetOnChange2(EBF_CallbackType onChangeCallback) { this->onChangeCallback2 = onChangeCallback; }
+		// Set callback functions for specific input
+		uint8_t SetOnChange(uint8_t index, EBF_CallbackType onPressCallback);
+
+		// Assign interface instance to specified input index
+		uint8_t AssignInterface(uint8_t index, PnP_InputInterface* pIfInstance);
+		uint8_t AssignInterface(uint8_t index, PnP_InputInterface& IfInstance) {
+			return AssignInterface(index, &IfInstance);
+		}
+
+		// Returns input index that caused the callback function call
+		// You can have the same callback function for all the inputs events
+		// where you can call the GetEventIndex to know which input actually changed
+		uint8_t GetEventIndex();
+
+		typedef union {
+			struct {
+				uint32_t index : 3;		// up to 8 inputs
+				uint32_t event : 8;		// input event that should be executed
+				uint32_t reserved : 21;
+			} fields;
+			uint32_t uint32;
+		} PostponedInterruptData;
 
 		uint8_t PostponeProcessing();
 		uint8_t InInterrupt() {
@@ -34,19 +60,33 @@ class PnP_Module_2Input : protected EBF_HalInstance {
 			return pLogic->IsRunFromIsr();
 		}
 
+	protected:
+		void SetPollingInterval(uint32_t ms);
+
 	private:
 		uint8_t Process();
+		void ProcessInterrupt();
 
 	 	uint8_t GetIntLine(uint8_t line, uint8_t &value);
 
-	private:
+		unsigned long millis_IIP() { return this->millis(); }
+		void SetPollingInterval_IIP(uint32_t ms) { this->SetPollingInterval(ms); }
+		uint32_t GetPollingInterval_IIP() { return this->GetPollingInterval(); }
+
+		// The onChangeCallback should be treated as a pointer to an interface instance after assignment
+		PnP_InputInterface* GetAsInputInterface(uint8_t index) { return (PnP_InputInterface*)(onChangeCallback[index]); }
+
+	protected:
 		PnP_PlugAndPlayI2C *pPnPI2C;
 
-		// Callbacks
-		EBF_CallbackType onChangeCallback1;
-		EBF_CallbackType onChangeCallback2;
+		uint8_t lastValue;
+		uint8_t currentEventIndex;
 
-		void ProcessInterrupt();
+		// Callbacks
+		EBF_CallbackType onChangeCallback[numberOfInputs];
+
+		// Interface assigned flag
+		uint8_t isInterfaceAssigned;
 };
 
 #endif

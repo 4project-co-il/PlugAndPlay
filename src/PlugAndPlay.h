@@ -22,7 +22,6 @@
 #include "Modules/PnP_Module_STTS22H_TemperatureSensor.h"
 #include "Modules/PnP_Module_1Led.h"
 #include "Modules/PnP_Module_2Led.h"
-#include "Modules/PnP_Module_1Input.h"
 #include "Modules/PnP_Module_2Input.h"
 #include "Modules/PnP_Module_2ButtonsInput.h"
 #include "Modules/PnP_Module_SparkFun_QWIIC_SerLCD.h"
