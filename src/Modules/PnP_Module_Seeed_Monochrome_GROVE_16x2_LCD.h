@@ -1,5 +1,5 @@
-#ifndef _PNP_MODULE_SEEED_MONOCHROME_GROVE_16x2_LCD_H__
-#define _PNP_MODULE_SEEED_MONOCHROME_GROVE_16x2_LCD_H__
+#ifndef __PNP_MODULE_SEEED_MONOCHROME_GROVE_16x2_LCD_H__
+#define __PNP_MODULE_SEEED_MONOCHROME_GROVE_16x2_LCD_H__
 
 #include <Arduino.h>
 #if __has_include("Project_Config.h")

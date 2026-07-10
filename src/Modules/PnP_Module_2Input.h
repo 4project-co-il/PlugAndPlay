@@ -1,5 +1,5 @@
-#ifndef _PNP_MODULE_2INPUT_H__
-#define _PNP_MODULE_2INPUT_H__
+#ifndef __PNP_MODULE_2INPUT_H__
+#define __PNP_MODULE_2INPUT_H__
 
 #include <Arduino.h>
 #if __has_include("Project_Config.h")
@@ -32,7 +32,7 @@ class PnP_Module_2Input : protected EBF_HalInstance, public PnP_InputInterfacePr
 		PnP_InputInterface* GetCurrentInterface();
 
 		// Set callback functions for specific input
-		uint8_t SetOnChange(uint8_t index, EBF_CallbackType onPressCallback);
+		uint8_t SetOnChange(uint8_t index, EBF_CallbackType onChangeCallback);
 
 		// Assign interface instance to specified input index
 		uint8_t AssignInterface(uint8_t index, PnP_InputInterface* pIfInstance);

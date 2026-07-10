@@ -1,5 +1,5 @@
-#ifndef _PNP_MODULE_2LED_H__
-#define _PNP_MODULE_2LED_H__
+#ifndef __PNP_MODULE_2LED_H__
+#define __PNP_MODULE_2LED_H__
 
 #include <Arduino.h>
 #if __has_include("Project_Config.h")

@@ -1,7 +1,7 @@
 #ifndef EBF_REMOVE_SPI_IMPLEMENTATION
 
-#ifndef _PNP_SPI_H__
-#define _PNP_SPI_H__
+#ifndef __PNP_SPI_H__
+#define __PNP_SPI_H__
 
 #include <Arduino.h>
 #if __has_include("Project_Config.h")
