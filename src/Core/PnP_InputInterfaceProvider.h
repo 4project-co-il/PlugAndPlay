@@ -16,20 +16,23 @@ class PnP_InputInterface;
 
 class PnP_InputInterfaceProvider {
 	public:
+		friend class PnP_InputInterface;
+		friend class PnP_BasicInputInterface;
 		friend class PnP_ButtonInterface;
+		friend class PnP_SwitchInterface;
 
 		// Assign interface instance to input provider
 		virtual uint8_t AssignInterface(uint8_t index, PnP_InputInterface* pIfInstance) = 0;
-
-		// Get current value of the input
-		virtual uint8_t GetValue(uint8_t index) = 0;
-		// Get the value as was registered during latest interrupt
-		virtual uint8_t GetLastValue(uint8_t index) = 0;
 
 		// Get pointer to current interface instance
 		virtual PnP_InputInterface* GetCurrentInterface() = 0;
 
 	private:
+		// Get current value of the input
+		virtual uint8_t GetValue_IIP(uint8_t index) = 0;
+		// Get the value as was registered during latest interrupt
+		virtual uint8_t GetLastValue_IIP(uint8_t index) = 0;
+
 		// Access to current millis value of the HAL instance via InputInterfaceProvider
 		virtual unsigned long millis_IIP() = 0;
 

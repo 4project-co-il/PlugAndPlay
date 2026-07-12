@@ -73,7 +73,7 @@ PnP_ButtonInterface::ButtonEvent PnP_ButtonInterface::ProcessInput(uint8_t value
 }
 
 void PnP_ButtonInterface::ExecuteCallback() {
-	ExecuteCallbackEx(pInputProvider->GetLastValue(providerIndex));
+	ExecuteCallbackEx(pInputProvider->GetLastValue_IIP(providerIndex));
 }
 
 void PnP_ButtonInterface::ExecuteCallbackEx(uint8_t value) {
@@ -108,7 +108,18 @@ uint8_t PnP_ButtonInterface::IsProcessingNeeded() {
 }
 
 uint8_t PnP_ButtonInterface::Process() {
-	ExecuteCallbackEx(pInputProvider->GetValue(providerIndex));
+	ExecuteCallbackEx(pInputProvider->GetValue_IIP(providerIndex));
+
+	return EBF_OK;
+}
+
+uint8_t PnP_ButtonInterface::SetInitialValue(uint8_t value)
+{
+	if (value == 0) {
+		state = BUTTON_STATE_PRESSED;
+	} else {
+		state = BUTTON_STATE_RELEASED;
+	}
 
 	return EBF_OK;
 }

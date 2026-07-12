@@ -28,8 +28,8 @@ class PnP_InputInterface {
 
 		virtual InputInterface_Type GetType() = 0;
 
-		uint8_t GetValue() { return pInputProvider->GetValue(providerIndex); }
-		uint8_t GetLastValue() { return pInputProvider->GetLastValue(providerIndex); }
+		uint8_t GetValue() { return pInputProvider->GetValue_IIP(providerIndex); }
+		uint8_t GetLastValue() { return pInputProvider->GetLastValue_IIP(providerIndex); }
 
 		void SetUserData(uint32_t data) { this->userData = data; }
 		uint32_t GetUserData() { return this->userData; }
@@ -44,6 +44,7 @@ class PnP_InputInterface {
 		virtual uint8_t AssignInterfaceProvider(PnP_InputInterfaceProvider* pProvider, uint8_t index);
 		virtual uint8_t IsProcessingNeeded() { return 0; }
 		virtual uint8_t Process() { return EBF_OK; };
+		virtual uint8_t SetInitialValue(uint8_t value) { return EBF_OK; }
 
 		// User data
 		uint32_t userData;

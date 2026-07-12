@@ -8,7 +8,7 @@ PnP_Module_2Input::PnP_Module_2Input()
 	this->id = PnP_DeviceId::PNP_ID_2INPUT;
 
 	isInterfaceAssigned = 0;
-	lastValue = 0;
+	lastValues = 0;
 	currentEventIndex = 0;
 
 	for (uint8_t i=0; i<numberOfInputs; i++) {
@@ -47,6 +47,9 @@ uint8_t PnP_Module_2Input::Init()
 	// PnP is interrupt driven, no polling is needed
 	this->SetPollingInterval(EBF_NO_POLLING);
 
+	// Read initial input status
+	lastValues = GetValues();
+
 	// Attach interrupt lines for that device
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);
 	if (rc != EBF_OK) {
@@ -70,7 +73,7 @@ uint8_t PnP_Module_2Input::Process()
 		// Set current interface provider and event index before the callbacks are called
 		PnP_InputInterface::pCurrentProvider = this;
 		currentEventIndex = data.fields.index;
-		lastValue = data.fields.event;
+		lastValues = data.fields.event;
 
 		if (isInterfaceAssigned & 1<<data.fields.index) {
 			// The onChangeCallback should be treated as a pointer to an interface instance
@@ -118,7 +121,7 @@ uint8_t PnP_Module_2Input::GetValue(uint8_t index)
 }
 
 // Returns bits 0 and 1 as HIGH or LOW for both interrupt lines
-uint8_t PnP_Module_2Input::GetValue()
+uint8_t PnP_Module_2Input::GetValues()
 {
 	uint8_t rc;
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
@@ -137,7 +140,17 @@ uint8_t PnP_Module_2Input::GetValue()
 // Returns the value of the input line as it was registered during last interrupt
 uint8_t PnP_Module_2Input::GetLastValue(uint8_t index)
 {
-	return lastValue & 1<<index;
+	if (lastValues & 1<<index) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+// Returns the value of the input line as it was registered during last interrupt
+uint8_t PnP_Module_2Input::GetLastValues()
+{
+	return lastValues;
 }
 
 // Returns pointer to current interface instance, if it was assigned
@@ -173,7 +186,10 @@ void PnP_Module_2Input::ProcessInterrupt()
 	// Hint will tell us what interrupt arrived
 	hint.uint32 = pLogic->GetInterruptHint();
 
-	lastValue = GetValue(hint.fields.interruptNumber);
+	// Clear the bit
+	lastValues &= ~(1<<hint.fields.interruptNumber);
+	// Set the bit
+	lastValues |= GetValue(hint.fields.interruptNumber);
 
 #ifdef EBF_DIRECT_CALL_FROM_ISR
 	PnP_InputInterface::pCurrentProvider = this;
@@ -185,7 +201,6 @@ void PnP_Module_2Input::ProcessInterrupt()
 
 		pInput->ExecuteCallback();
 	} else {
-		// Should treat the onChangeCallback pointer as a pointer to the interface instance
 		onChangeCallback[hint.fields.interruptNumber]();
 	}
 #else
@@ -205,7 +220,7 @@ uint8_t PnP_Module_2Input::PostponeProcessing()
 	hint.uint32 = pLogic->GetInterruptHint();
 
 	data.fields.index = hint.fields.interruptNumber;
-	data.fields.event = lastValue;
+	data.fields.event = GetLastValues();
 
 	// Pass the control back to EBF, so it will call the Process() function from normal run
 	rc = pLogic->PostponeInterrupt(this, data.uint32);
@@ -238,6 +253,8 @@ uint8_t PnP_Module_2Input::AssignInterface(uint8_t index, PnP_InputInterface* pI
 
 	onChangeCallback[index] = (EBF_CallbackType)pIfInstance;
 	isInterfaceAssigned |= 1<<index;
+
+	pIfInstance->SetInitialValue(GetLastValue(index));
 
 	return pIfInstance->AssignInterfaceProvider(this, index);
 }

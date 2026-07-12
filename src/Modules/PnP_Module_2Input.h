@@ -26,9 +26,15 @@ class PnP_Module_2Input : protected EBF_HalInstance, public PnP_InputInterfacePr
 
 		uint8_t Init();
 
+		// Returns current value of the specified input line
 		uint8_t GetValue(uint8_t index);
-		uint8_t GetValue();
+		// Returns current values of all the input lines
+		uint8_t GetValues();
+		// Returns last value of the specified input line as it appeared while reading from the chip
 		uint8_t GetLastValue(uint8_t index);
+		// Returns all last values as it appeared while reading from the chip
+		uint8_t GetLastValues();
+
 		PnP_InputInterface* GetCurrentInterface();
 
 		// Set callback functions for specific input
@@ -69,6 +75,8 @@ class PnP_Module_2Input : protected EBF_HalInstance, public PnP_InputInterfacePr
 
 	 	uint8_t GetIntLine(uint8_t line, uint8_t &value);
 
+		uint8_t GetValue_IIP(uint8_t index) { return this->GetValue(index); }
+		uint8_t GetLastValue_IIP(uint8_t index) { return this->GetLastValue(index); }
 		unsigned long millis_IIP() { return this->millis(); }
 		void SetPollingInterval_IIP(uint32_t ms) { this->SetPollingInterval(ms); }
 		uint32_t GetPollingInterval_IIP() { return this->GetPollingInterval(); }
@@ -79,7 +87,7 @@ class PnP_Module_2Input : protected EBF_HalInstance, public PnP_InputInterfacePr
 	protected:
 		PnP_PlugAndPlayI2C *pPnPI2C;
 
-		uint8_t lastValue;
+		uint8_t lastValues;
 		uint8_t currentEventIndex;
 
 		// Callbacks

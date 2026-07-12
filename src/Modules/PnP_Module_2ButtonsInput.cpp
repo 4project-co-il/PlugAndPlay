@@ -2,10 +2,8 @@
 
 extern void EBF_EmptyCallback();
 
-PnP_Module_2ButtonsInput::PnP_Module_2ButtonsInput()
+PnP_Module_2ButtonsInput::PnP_Module_2ButtonsInput() : PnP_Module_2Input()
 {
-	PnP_Module_2Input();
-
 	this->type = HAL_Type::PnP_DEVICE;
 	this->id = PnP_DeviceId::PNP_ID_2BUTTONS_INPUT;
 }
@@ -40,6 +38,9 @@ uint8_t PnP_Module_2ButtonsInput::Init()
 
 	// PnP is interrupt driven, no polling is needed
 	this->SetPollingInterval(EBF_NO_POLLING);
+
+	// Read initial input status
+	lastValues = GetValues();
 
 	// Attach interrupt lines for that device
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);

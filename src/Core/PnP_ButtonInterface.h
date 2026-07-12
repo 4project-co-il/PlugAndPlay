@@ -41,6 +41,7 @@ class PnP_ButtonInterface : public PnP_InputInterface {
 		void ExecuteCallbackEx(uint8_t value);
 		virtual uint8_t IsProcessingNeeded();
 		virtual uint8_t Process();
+		virtual uint8_t SetInitialValue(uint8_t value);
 
 	private:
 		enum ButtonState : uint8_t {
