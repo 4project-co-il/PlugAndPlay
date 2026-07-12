@@ -16,8 +16,6 @@ class PnP_Module_2ButtonsInput : public PnP_Module_2Input {
 		PnP_Module_2ButtonsInput();
 
 		static const uint8_t numberOfButtons = PnP_Module_2Input::numberOfInputs;
-
-		uint8_t Init();
 };
 
 #endif

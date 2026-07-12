@@ -28,7 +28,7 @@ uint8_t PnP_Module_2Led::Init()
 	this->pPnPI2C = pPnPI2C;
 
 	// Initialize the instance
-	rc = EBF_HalInstance::Init(HAL_Type::PnP_DEVICE, PnP_DeviceId::PNP_ID_2LED);
+	rc = EBF_HalInstance::Init(this->type, this->id);
 	if (rc != EBF_OK) {
 		EBF_REPORT_ERROR(rc);
 		return rc;
