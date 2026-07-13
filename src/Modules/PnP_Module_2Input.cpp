@@ -182,18 +182,18 @@ void PnP_Module_2Input::ProcessInterrupt()
 {
 	EBF_Logic *pLogic = EBF_Logic::GetInstance();
 	PnP_PlugAndPlayHub::InterruptHint hint;
+	uint8_t inputs = 0;
 
 	// Hint will tell us what interrupt arrived
 	hint.uint32 = pLogic->GetInterruptHint();
 
-	// Clear the bit
-	lastValues &= ~(1<<hint.fields.interruptNumber);
-	// Set the bit
-	lastValues |= GetValue(hint.fields.interruptNumber);
+	inputs = GetValues();
 
 #ifdef EBF_DIRECT_CALL_FROM_ISR
+	// Set current interface provider and event index before the callbacks are called
 	PnP_InputInterface::pCurrentProvider = this;
 	currentEventIndex = hint.fields.interruptNumber;
+	lastValues = inputs;
 
 	if (isInterfaceAssigned & 1<<hint.fields.interruptNumber) {
 		// The onChangeCallback should be treated as a pointer to an interface instance
@@ -205,22 +205,19 @@ void PnP_Module_2Input::ProcessInterrupt()
 	}
 #else
 	// Postpone the processing so the event will be handled from the normal run
-	PostponeProcessing();
+	PostponeProcessing(hint.fields.interruptNumber, inputs);
 #endif
 }
 
 // PostponeProcessing should be called to execute the callback processing later in the normal loop
-uint8_t PnP_Module_2Input::PostponeProcessing()
+uint8_t PnP_Module_2Input::PostponeProcessing(uint8_t eventIndex, uint8_t inputValues)
 {
 	uint8_t rc;
 	EBF_Logic *pLogic = EBF_Logic::GetInstance();
-	PnP_PlugAndPlayHub::InterruptHint hint = {0};
 	PostponedInterruptData data = {0};
 
-	hint.uint32 = pLogic->GetInterruptHint();
-
-	data.fields.index = hint.fields.interruptNumber;
-	data.fields.event = GetLastValues();
+	data.fields.index = eventIndex;
+	data.fields.event = inputValues;
 
 	// Pass the control back to EBF, so it will call the Process() function from normal run
 	rc = pLogic->PostponeInterrupt(this, data.uint32);

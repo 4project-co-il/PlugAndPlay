@@ -60,7 +60,7 @@ class PnP_Module_2Input : protected EBF_HalInstance, public PnP_InputInterfacePr
 			uint32_t uint32;
 		} PostponedInterruptData;
 
-		uint8_t PostponeProcessing();
+		uint8_t PostponeProcessing(uint8_t eventIndex, uint8_t inputValues);
 		uint8_t InInterrupt() {
 			EBF_Logic *pLogic = EBF_Logic::GetInstance();
 			return pLogic->IsRunFromIsr();
