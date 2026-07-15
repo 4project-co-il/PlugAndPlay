@@ -22,7 +22,7 @@ uint8_t PnP_Module_Seeed_Monochrome_GROVE_16x2_LCD::Init()
 		return rc;
 	}
 
-	pI2C = pPnPI2C;
+	chip.pI2C = pPnPI2C;
 
 	// Initialize the device
 	rc = EBF_Seeed_Monochrome_GROVE_16x2_LCD::Init(deviceInfo.endpointData[endpointIndex].i2cAddress);
