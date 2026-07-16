@@ -1,5 +1,5 @@
-#ifndef __PNP_MODULE_4INPUT_H__
-#define __PNP_MODULE_4INPUT_H__
+#ifndef __PNP_MODULE_4INPUTS_H__
+#define __PNP_MODULE_4INPUTS_H__
 
 #include <Arduino.h>
 #if __has_include("Project_Config.h")
@@ -18,12 +18,12 @@
 #include "../Core/PnP_InputInterface.h"
 #include "../Core/PnP_InputInterfaceProvider.h"
 
-class PnP_Module_4Input : public EBF_Module_4Input, public PnP_InputInterfaceProvider {
+class PnP_Module_4Inputs : public EBF_Module_4Input, public PnP_InputInterfaceProvider {
 	private:
-		EBF_DEBUG_MODULE_NAME("PnP_Module_4Input");
+		EBF_DEBUG_MODULE_NAME("PnP_Module_4Inputs");
 
 	public:
-		PnP_Module_4Input();
+		PnP_Module_4Inputs();
 
 		uint8_t Init();
 

@@ -1,5 +1,5 @@
-#ifndef __PNP_MODULE_2LED_H__
-#define __PNP_MODULE_2LED_H__
+#ifndef __PNP_MODULE_2LEDS_H__
+#define __PNP_MODULE_2LEDS_H__
 
 #include <Arduino.h>
 #if __has_include("Project_Config.h")
@@ -13,12 +13,12 @@
 #include "../Core/PnP_PlugAndPlayDevice.h"
 #include "../Core/PnP_PlugAndPlayI2C.h"
 
-class PnP_Module_2Led : protected EBF_HalInstance {
+class PnP_Module_2Leds : protected EBF_HalInstance {
 	private:
-		EBF_DEBUG_MODULE_NAME("PnP_Module_2Led");
+		EBF_DEBUG_MODULE_NAME("PnP_Module_2Leds");
 
 	public:
-		PnP_Module_2Led();
+		PnP_Module_2Leds();
 
 		uint8_t Init();
 		uint8_t SetValue(uint8_t value);

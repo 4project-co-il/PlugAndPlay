@@ -1,5 +1,5 @@
-#ifndef __PNP_MODULE_2INPUT_H__
-#define __PNP_MODULE_2INPUT_H__
+#ifndef __PNP_MODULE_2INPUTS_H__
+#define __PNP_MODULE_2INPUTS_H__
 
 #include <Arduino.h>
 #if __has_include("Project_Config.h")
@@ -15,12 +15,12 @@
 #include "../Core/PnP_InputInterface.h"
 #include "../Core/PnP_InputInterfaceProvider.h"
 
-class PnP_Module_2Input : protected EBF_HalInstance, public PnP_InputInterfaceProvider {
+class PnP_Module_2Inputs : protected EBF_HalInstance, public PnP_InputInterfaceProvider {
 	private:
-		EBF_DEBUG_MODULE_NAME("PnP_Module_2Input");
+		EBF_DEBUG_MODULE_NAME("PnP_Module_2Inputs");
 
 	public:
-		PnP_Module_2Input();
+		PnP_Module_2Inputs();
 
 		static const uint8_t numberOfInputs = 2;
 

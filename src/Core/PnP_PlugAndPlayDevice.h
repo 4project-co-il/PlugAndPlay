@@ -38,9 +38,9 @@ typedef enum : uint32_t {
 	// Devices
 	PNP_ID_STTS22H_TEMPERATURE_SENSOR = 201,
 	PNP_ID_1LED,							// Module with 1 LED connected directly to interrupt #0 line
-	PNP_ID_2LED,							// Module with 2 LEDs connected directly to both interrupt lines
-	PNP_ID_2INPUT,							// Module with 2 inputs connected directly to interrupt lines
-	PNP_ID_4INPUT,							// Module with 4 inputs with IO extender chip
+	PNP_ID_2LEDS,							// Module with 2 LEDs connected directly to both interrupt lines
+	PNP_ID_2INPUTS,							// Module with 2 inputs connected directly to interrupt lines
+	PNP_ID_4INPUTS,							// Module with 4 inputs with IO extender chip
 	PNP_ID_2BUTTONS_INPUT,					// Module with 2 buttons connected directly to interrupt lines
 	PNP_ID_SPARKFUN_QWIIC_SERLCD,			// SparkFun QWIIC SerLCD. Both 2 and 4 rows versions
 	PNP_ID_SEEED_MONOCHROME_GROVE_16x2_LCD,	// SeeedStudio monochrome GROVE 16x2 LCD. Black on Yellow, Black on Red, White on Blue

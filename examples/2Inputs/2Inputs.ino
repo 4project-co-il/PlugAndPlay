@@ -13,7 +13,7 @@ EBF_Core EBF;
 PnP_Serial serial;
 
 // The PnP hardware module with 2 inputs
-PnP_Module_2Input inputModule;
+PnP_Module_2Inputs inputModule;
 
 // This example will use the basic OnChange callbacks from the input module
 // Since different devices might be connected to the module, you might want to use the corresponding interface

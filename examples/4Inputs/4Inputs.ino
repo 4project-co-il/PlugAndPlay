@@ -15,7 +15,7 @@ EBF_Core EBF;
 PnP_Serial serial;
 
 // The PnP hardware module with 4 inputs
-PnP_Module_4Input inputModule;
+PnP_Module_4Inputs inputModule;
 
 // This example will use PnP_BasicInputInterface for callbacks, which provides the same OnChange functionality
 // as the input module code, but adds flexibility of having multiple inputs, that might be connected to
@@ -74,7 +74,7 @@ void setup()
 	// Initialize serial interface object
 	serial.Init();
 
-	// Initialize 2 inputs module
+	// Initialize the inputs module
 	inputModule.Init();
 
 	// Use te same onInputChange callback for all the inputs

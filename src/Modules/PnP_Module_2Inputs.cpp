@@ -1,11 +1,11 @@
-#include "PnP_Module_2Input.h"
+#include "PnP_Module_2Inputs.h"
 
 extern void EBF_EmptyCallback();
 
-PnP_Module_2Input::PnP_Module_2Input()
+PnP_Module_2Inputs::PnP_Module_2Inputs()
 {
 	this->type = HAL_Type::PnP_DEVICE;
-	this->id = PnP_DeviceId::PNP_ID_2INPUT;
+	this->id = PnP_DeviceId::PNP_ID_2INPUTS;
 
 	isInterfaceAssigned = 0;
 	lastValues = 0;
@@ -16,7 +16,7 @@ PnP_Module_2Input::PnP_Module_2Input()
 	}
 }
 
-uint8_t PnP_Module_2Input::Init()
+uint8_t PnP_Module_2Inputs::Init()
 {
 	uint8_t rc;
 	PnP_DeviceInfo deviceInfo;
@@ -61,7 +61,7 @@ uint8_t PnP_Module_2Input::Init()
 }
 
 // Called by the EBF from normal run to take care of the events
-uint8_t PnP_Module_2Input::Process()
+uint8_t PnP_Module_2Inputs::Process()
 {
 	EBF_Logic *pLogic = EBF_Logic::GetInstance();
 	PostponedInterruptData data = {0};
@@ -106,7 +106,7 @@ uint8_t PnP_Module_2Input::Process()
 }
 
 // Returns 1 if input is HIGH for a specific interrupt line
-uint8_t PnP_Module_2Input::GetValue(uint8_t index)
+uint8_t PnP_Module_2Inputs::GetValue(uint8_t index)
 {
 	uint8_t rc;
 	uint8_t value;
@@ -121,7 +121,7 @@ uint8_t PnP_Module_2Input::GetValue(uint8_t index)
 }
 
 // Returns bits 0 and 1 as HIGH or LOW for both interrupt lines
-uint8_t PnP_Module_2Input::GetValues()
+uint8_t PnP_Module_2Inputs::GetValues()
 {
 	uint8_t rc;
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
@@ -138,7 +138,7 @@ uint8_t PnP_Module_2Input::GetValues()
 }
 
 // Returns the value of the input line as it was registered during last interrupt
-uint8_t PnP_Module_2Input::GetLastValue(uint8_t index)
+uint8_t PnP_Module_2Inputs::GetLastValue(uint8_t index)
 {
 	if (lastValues & 1<<index) {
 		return 1;
@@ -148,13 +148,13 @@ uint8_t PnP_Module_2Input::GetLastValue(uint8_t index)
 }
 
 // Returns the value of the input line as it was registered during last interrupt
-uint8_t PnP_Module_2Input::GetLastValues()
+uint8_t PnP_Module_2Inputs::GetLastValues()
 {
 	return lastValues;
 }
 
 // Returns pointer to current interface instance, if it was assigned
-PnP_InputInterface* PnP_Module_2Input::GetCurrentInterface()
+PnP_InputInterface* PnP_Module_2Inputs::GetCurrentInterface()
 {
 	if (isInterfaceAssigned & 1<<currentEventIndex) {
 		return GetAsInputInterface(currentEventIndex);
@@ -163,7 +163,7 @@ PnP_InputInterface* PnP_Module_2Input::GetCurrentInterface()
 	return NULL;
 }
 
-uint8_t PnP_Module_2Input::GetIntLine(uint8_t line, uint8_t &value)
+uint8_t PnP_Module_2Inputs::GetIntLine(uint8_t line, uint8_t &value)
 {
 	uint8_t rc;
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
@@ -178,7 +178,7 @@ uint8_t PnP_Module_2Input::GetIntLine(uint8_t line, uint8_t &value)
 }
 
 // Called directly from the ISR
-void PnP_Module_2Input::ProcessInterrupt()
+void PnP_Module_2Inputs::ProcessInterrupt()
 {
 	EBF_Logic *pLogic = EBF_Logic::GetInstance();
 	PnP_PlugAndPlayHub::InterruptHint hint;
@@ -210,7 +210,7 @@ void PnP_Module_2Input::ProcessInterrupt()
 }
 
 // PostponeProcessing should be called to execute the callback processing later in the normal loop
-uint8_t PnP_Module_2Input::PostponeProcessing(uint8_t eventIndex, uint8_t inputValues)
+uint8_t PnP_Module_2Inputs::PostponeProcessing(uint8_t eventIndex, uint8_t inputValues)
 {
 	uint8_t rc;
 	EBF_Logic *pLogic = EBF_Logic::GetInstance();
@@ -229,7 +229,7 @@ uint8_t PnP_Module_2Input::PostponeProcessing(uint8_t eventIndex, uint8_t inputV
 	return EBF_OK;
 }
 
-uint8_t PnP_Module_2Input::SetOnChange(uint8_t index, EBF_CallbackType onChangeCallback)
+uint8_t PnP_Module_2Inputs::SetOnChange(uint8_t index, EBF_CallbackType onChangeCallback)
 {
 	if (index >= numberOfInputs) {
 		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
@@ -241,7 +241,7 @@ uint8_t PnP_Module_2Input::SetOnChange(uint8_t index, EBF_CallbackType onChangeC
 	return EBF_OK;
 }
 
-uint8_t PnP_Module_2Input::AssignInterface(uint8_t index, PnP_InputInterface* pIfInstance)
+uint8_t PnP_Module_2Inputs::AssignInterface(uint8_t index, PnP_InputInterface* pIfInstance)
 {
 	if (index >= numberOfInputs) {
 		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
@@ -257,7 +257,7 @@ uint8_t PnP_Module_2Input::AssignInterface(uint8_t index, PnP_InputInterface* pI
 }
 
 // This is an override of the default function
-void PnP_Module_2Input::SetPollingInterval(uint32_t ms)
+void PnP_Module_2Inputs::SetPollingInterval(uint32_t ms)
 {
 	// Since we have multiple inputs that might need the polling at the same time
 	// we can't just change the value. Need to check if there is an interface instance that might
@@ -281,7 +281,7 @@ void PnP_Module_2Input::SetPollingInterval(uint32_t ms)
 // Returns input index that caused the callback function call
 // You can have the same callback function for all onChange events
 // where you can call the GetEventIndex to know which input actually changed
-uint8_t PnP_Module_2Input::GetEventIndex()
+uint8_t PnP_Module_2Inputs::GetEventIndex()
 {
 	EBF_Logic *pLogic = EBF_Logic::GetInstance();
 	PnP_PlugAndPlayHub::InterruptHint hint;
