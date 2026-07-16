@@ -17,6 +17,7 @@
 #endif
 
 #include "Core/PnP_InputInterface.h"
+#include "Core/PnP_BasicInputInterface.h"
 #include "Core/PnP_SwitchInterface.h"
 #include "Core/PnP_ButtonInterface.h"
 #include "Modules/PnP_Module_STTS22H_TemperatureSensor.h"
