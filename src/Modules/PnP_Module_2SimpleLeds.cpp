@@ -1,12 +1,12 @@
-#include "PnP_Module_2Leds.h"
+#include "PnP_Module_2SimpleLeds.h"
 
-PnP_Module_2Leds::PnP_Module_2Leds()
+PnP_Module_2SimpleLeds::PnP_Module_2SimpleLeds()
 {
 	this->type = HAL_Type::PnP_DEVICE;
-	this->id = PnP_DeviceId::PNP_ID_2LEDS;
+	this->id = PnP_DeviceId::PNP_ID_2_SIMPLE_LEDS;
 }
 
-uint8_t PnP_Module_2Leds::Init()
+uint8_t PnP_Module_2SimpleLeds::Init()
 {
 	uint8_t rc;
 	PnP_DeviceInfo deviceInfo;
@@ -48,7 +48,7 @@ uint8_t PnP_Module_2Leds::Init()
 	return EBF_OK;
 }
 
-uint8_t PnP_Module_2Leds::Process()
+uint8_t PnP_Module_2SimpleLeds::Process()
 {
 	// Nothing to do
 	// No polling needed
@@ -58,7 +58,7 @@ uint8_t PnP_Module_2Leds::Process()
 }
 
 // Set both interrupt lines values
-uint8_t PnP_Module_2Leds::SetValue(uint8_t value)
+uint8_t PnP_Module_2SimpleLeds::SetValue(uint8_t value)
 {
 	uint8_t rc;
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
@@ -73,18 +73,18 @@ uint8_t PnP_Module_2Leds::SetValue(uint8_t value)
 }
 
 // Turns the LED ON.
-uint8_t PnP_Module_2Leds::On(uint8_t index)
+uint8_t PnP_Module_2SimpleLeds::On(uint8_t index)
 {
 	return SetIntLine(index, 1);
 }
 
 // Turns the LED OFF.
-uint8_t PnP_Module_2Leds::Off(uint8_t index)
+uint8_t PnP_Module_2SimpleLeds::Off(uint8_t index)
 {
 	return SetIntLine(index, 0);
 }
 
-uint8_t PnP_Module_2Leds::SetIntLine(uint8_t line, uint8_t value)
+uint8_t PnP_Module_2SimpleLeds::SetIntLine(uint8_t line, uint8_t value)
 {
 	uint8_t rc;
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();

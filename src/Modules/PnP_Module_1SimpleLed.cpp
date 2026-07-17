@@ -1,12 +1,12 @@
-#include "PnP_Module_1Led.h"
+#include "PnP_Module_1SimpleLed.h"
 
-PnP_Module_1Led::PnP_Module_1Led()
+PnP_Module_1SimpleLed::PnP_Module_1SimpleLed()
 {
 	this->type = HAL_Type::PnP_DEVICE;
-	this->id = PnP_DeviceId::PNP_ID_1LED;
+	this->id = PnP_DeviceId::PNP_ID_1_SIMPLE_LED;
 }
 
-uint8_t PnP_Module_1Led::Init()
+uint8_t PnP_Module_1SimpleLed::Init()
 {
 	uint8_t rc;
 	PnP_DeviceInfo deviceInfo;
@@ -48,7 +48,7 @@ uint8_t PnP_Module_1Led::Init()
 	return EBF_OK;
 }
 
-uint8_t PnP_Module_1Led::Process()
+uint8_t PnP_Module_1SimpleLed::Process()
 {
 	// Nothing to do
 	// No polling needed
@@ -58,18 +58,18 @@ uint8_t PnP_Module_1Led::Process()
 }
 
 // Turns the LED ON.
-uint8_t PnP_Module_1Led::On()
+uint8_t PnP_Module_1SimpleLed::On()
 {
 	return SetIntLine(0, 1);
 }
 
 // Turns the LED OFF.
-uint8_t PnP_Module_1Led::Off()
+uint8_t PnP_Module_1SimpleLed::Off()
 {
 	return SetIntLine(0, 0);
 }
 
-uint8_t PnP_Module_1Led::SetIntLine(uint8_t line, uint8_t value)
+uint8_t PnP_Module_1SimpleLed::SetIntLine(uint8_t line, uint8_t value)
 {
 	uint8_t rc = EBF_OK;
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
