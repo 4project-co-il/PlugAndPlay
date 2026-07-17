@@ -11,14 +11,14 @@
 #include "../../../EventBasedFramework/src/Core/EBF_HalInstance.h"
 #include "../../../EventBasedFramework/src/Core/EBF_Core.h"
 #include "../../../EventBasedFramework/src/Core/EBF_Logic.h"
-#include "../../../EventBasedFramework/src/Products/EBF_Module_4Input.h"
+#include "../../../EventBasedFramework/src/Products/EBF_Module_4Inputs.h"
 #include "../Core/PnP_PlugAndPlayDevice.h"
 #include "../Core/PnP_PlugAndPlayManager.h"
 #include "../Core/PnP_PlugAndPlayI2C.h"
 #include "../Core/PnP_InputInterface.h"
 #include "../Core/PnP_InputInterfaceProvider.h"
 
-class PnP_Module_4Inputs : public EBF_Module_4Input, public PnP_InputInterfaceProvider {
+class PnP_Module_4Inputs : public EBF_Module_4Inputs, public PnP_InputInterfaceProvider {
 	private:
 		EBF_DEBUG_MODULE_NAME("PnP_Module_4Inputs");
 
@@ -28,13 +28,13 @@ class PnP_Module_4Inputs : public EBF_Module_4Input, public PnP_InputInterfacePr
 		uint8_t Init();
 
 		// Returns current value of the specified input line
-		uint8_t GetValue(uint8_t index) { return EBF_Module_4Input::GetValue(index); }
+		uint8_t GetValue(uint8_t index) { return EBF_Module_4Inputs::GetValue(index); }
 		// Returns current values of all the input lines
-		uint8_t GetValues() { return EBF_Module_4Input::GetValues(); }
+		uint8_t GetValues() { return EBF_Module_4Inputs::GetValues(); }
 		// Returns last value of the specified input line as it appeared while reading from the chip
-		uint8_t GetLastValue(uint8_t index) { return EBF_Module_4Input::GetLastValue(index); }
+		uint8_t GetLastValue(uint8_t index) { return EBF_Module_4Inputs::GetLastValue(index); }
 		// Returns all last values as it appeared while reading from the chip
-		uint8_t GetLastValues() { return EBF_Module_4Input::GetLastValues(); }
+		uint8_t GetLastValues() { return EBF_Module_4Inputs::GetLastValues(); }
 
 		PnP_InputInterface* GetCurrentInterface();
 

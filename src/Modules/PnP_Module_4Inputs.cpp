@@ -1,6 +1,6 @@
 #include "PnP_Module_4Inputs.h"
 
-PnP_Module_4Inputs::PnP_Module_4Inputs() : EBF_Module_4Input(NULL)
+PnP_Module_4Inputs::PnP_Module_4Inputs() : EBF_Module_4Inputs(NULL)
 {
 	this->type = HAL_Type::PnP_DEVICE;
 	this->id = PnP_DeviceId::PNP_ID_4INPUTS;
@@ -25,7 +25,7 @@ uint8_t PnP_Module_4Inputs::Init()
 	chip.pI2C = pPnPI2C;
 
 	// Initialize the device
-	rc = EBF_Module_4Input::Init(deviceInfo.endpointData[endpointIndex].i2cAddress);
+	rc = EBF_Module_4Inputs::Init(deviceInfo.endpointData[endpointIndex].i2cAddress);
 	if (rc != EBF_OK) {
 		return rc;
 	}
@@ -57,7 +57,7 @@ void PnP_Module_4Inputs::ExecuteCallback()
 		pInput->ExecuteCallback();
 	} else {
 		// Interface is not assigned to that input, procceed with regular processing
-		EBF_Module_4Input::ExecuteCallback();
+		EBF_Module_4Inputs::ExecuteCallback();
 	}
 
 }
@@ -67,7 +67,7 @@ uint8_t PnP_Module_4Inputs::Process()
 {
 	uint8_t rc;
 
-	rc = EBF_Module_4Input::Process();
+	rc = EBF_Module_4Inputs::Process();
 	if (rc != EBF_OK) {
 		return rc;
 	}
@@ -101,7 +101,7 @@ uint8_t PnP_Module_4Inputs::AssignInterface(uint8_t index, PnP_InputInterface* p
 	onChangeCallback[index] = (EBF_CallbackType)pIfInstance;
 	isInterfaceAssigned |= 1<<index;
 
-	pIfInstance->SetInitialValue(EBF_Module_4Input::GetLastValue(index));
+	pIfInstance->SetInitialValue(EBF_Module_4Inputs::GetLastValue(index));
 
 	return pIfInstance->AssignInterfaceProvider(this, index);
 }
@@ -113,7 +113,5 @@ PnP_InputInterface* PnP_Module_4Inputs::GetCurrentInterface()
 		return GetAsInputInterface(currentEventIndex);
 	}
 
-SerialUSB.print("IDX=");
-SerialUSB.println(currentEventIndex);
 	return NULL;
 }
