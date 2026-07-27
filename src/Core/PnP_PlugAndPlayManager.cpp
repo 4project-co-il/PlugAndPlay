@@ -72,7 +72,7 @@ uint8_t PnP_PlugAndPlayManager::Init()
 		pnpI2CArr[i]->SetClock(400000);
 	}
 
-	pMainHub = new PnP_PlugAndPlayHub();
+	pMainHub = new PnP_PlugAndPlayHub(pnpI2CArr[PNP_CONTROLLER_INTERNAL_I2C_INTERFACE_INDEX]);
 	if (pMainHub == NULL) {
 		EBF_REPORT_ERROR(EBF_NOT_ENOUGH_MEMORY);
 		return EBF_NOT_ENOUGH_MEMORY;
@@ -123,8 +123,14 @@ uint8_t PnP_PlugAndPlayManager::InitHubs(PnP_PlugAndPlayHub *pHub)
 	PnP_DeviceInfo deviceInfo;
 	uint8_t parameters[32];
 
+	// Limit number of routing levels
+	if (pHub->routingLevel + 1 > maxRoutingLevels) {
+		// We're reached max routing levels
+		return EBF_OK;
+	}
+
 #ifdef PNP_DEBUG_ENUMERATION
-	serial.println(F("PnP InitHubs"));
+	serial.println(F("PnP InitHubs entry"));
 #endif
 
 	// Loop over all the ports of that HUB
@@ -143,28 +149,20 @@ uint8_t PnP_PlugAndPlayManager::InitHubs(PnP_PlugAndPlayHub *pHub)
 			return rc;
 		}
 
-		// Read a regular PnP device info
-		rc = GetDeviceInfo(pI2C, deviceInfo, PNP_EEPROM_DEVICE);
+		// First check if there is an extension HUB connected to that port
+		// Main HUB will be level 1, generic HUBs will be levels 2,3
+		rc = GetDeviceInfo(pI2C, deviceInfo, pHub->routingLevel + 1);
 		if (rc != EBF_OK) {
-			// There is no PnP device connected to that port, check maybe there's another HUB set up for the next routing level
-			if (pHub->routingLevel + 1 > maxRoutingLevels) {
-				// We're reached max routing levels
-				continue;
-			}
-
 #ifdef PNP_DEBUG_ENUMERATION
-			serial.print(F("Nothing connected, try next level: "));
-			serial.println(pHub->routingLevel+1);
+			serial.println(F("No HUB on that port"));
 #endif
-
-			// Try to get device for the next routing level
-			// Main HUB will be level 1, generic HUBs will be levels 4,5,6,7
-			rc = GetDeviceInfo(pI2C, deviceInfo, pHub->routingLevel + 1);
+			// No HUB found, check if a regular PnP device is connected
+			rc = GetDeviceInfo(pI2C, deviceInfo, PNP_EEPROM_DEVICE);
 			if (rc != EBF_OK) {
 #ifdef PNP_DEBUG_ENUMERATION
-				serial.println(F("Nothing on next level as well"));
+				serial.println(F("No device on that port"));
 #endif
-					// No HUB either, mark it with (-1), so it will be skipped in searches
+				// No device and no HUB either, mark it with (-1), so it will be skipped in searches
 				pHub->pPortInfo[port].numberOfEndpoints = (uint8_t)(-1);
 				continue;
 			}
@@ -175,7 +173,7 @@ uint8_t PnP_PlugAndPlayManager::InitHubs(PnP_PlugAndPlayHub *pHub)
 		PrintDeviceInfo(deviceInfo);
 #endif
 
-		// In case it's a HUB, create its new instance and connect all the pointers
+		// In case it's an extender HUB, create its new instance and connect all the pointers
 		if (deviceInfo.deviceIDs[0] == PnP_DeviceId::PNP_ID_EXTENDER_HUB) {
 			// Read the parameters in case the configuration says so
 			if (deviceInfo.paramsLength > 0) {
@@ -193,7 +191,7 @@ uint8_t PnP_PlugAndPlayManager::InitHubs(PnP_PlugAndPlayHub *pHub)
 			PrintDeviceInfo(deviceInfo, parameters);
 #endif
 
-			PnP_PlugAndPlayHub* pNewHub = new PnP_PlugAndPlayHub();
+			PnP_PlugAndPlayHub* pNewHub = new PnP_PlugAndPlayHub(pI2C);
 
 			rc = pNewHub->Init(pHub, port, deviceInfo, &parameters[0]);
 			if (rc != EBF_OK) {
@@ -214,6 +212,10 @@ uint8_t PnP_PlugAndPlayManager::InitHubs(PnP_PlugAndPlayHub *pHub)
 			}
 		}
 	}
+
+#ifdef PNP_DEBUG_ENUMERATION
+	serial.println(F("PnP InitHubs exit"));
+#endif
 
 	return EBF_OK;
 }
@@ -309,7 +311,6 @@ uint8_t PnP_PlugAndPlayManager::AssignDevice(
 		pPortInfo = &pHub->pPortInfo[port];
 
 		// Nothing is connected to that port
-
 		if (pPortInfo->numberOfEndpoints == (uint8_t)(-1)) {
 			continue;
 		}
@@ -382,7 +383,13 @@ uint8_t PnP_PlugAndPlayManager::AssignDevice(
 		return EBF_OK;
 	}
 
-	EBF_REPORT_ERROR(EBF_NOT_INITIALIZED);
+	if (pHub == pMainHub) {
+		// Report not initialize when we're out of the main HUB search loop
+		// That means we're finished searching. Other calls are for extender HUBs
+		// and there are more posibilities in the main loop or another connected extender
+		EBF_REPORT_ERROR(EBF_NOT_INITIALIZED);
+	}
+
 	return EBF_NOT_INITIALIZED;
 }
 
@@ -522,11 +529,13 @@ void PnP_PlugAndPlayManager::PrintDeviceInfo(PnP_DeviceInfo &deviceInfo, uint8_t
 		serial.println(deviceInfo.endpointData[i].i2cAddress, HEX);
 	}
 
-	for (i=0; i<deviceInfo.paramsLength; i++) {
-		serial.print(F("  Params["));
-		serial.print(i);
-		serial.print(F("]: "));
-		serial.println(pParams[i]);
+	if (pParams != NULL) {
+		for (i=0; i<deviceInfo.paramsLength; i++) {
+			serial.print(F("  Params["));
+			serial.print(i);
+			serial.print(F("]: "));
+			serial.println(pParams[i]);
+		}
 	}
 }
 #endif

@@ -80,7 +80,7 @@ uint8_t PnP_Module_1SimpleLed::SetIntLine(uint8_t line, uint8_t value)
 		return EBF_INDEX_OUT_OF_BOUNDS;
 	}
 
-	rc = pHub->SetIntLine(pPnPI2C, pPnPI2C->GetPortNumber(), line, value & 0x03);
+	rc = pHub->SetIntLine(pPnPI2C->GetPortNumber(), line, value & 0x03);
 	if (rc != EBF_OK) {
 		EBF_REPORT_ERROR(rc);
 		return rc;

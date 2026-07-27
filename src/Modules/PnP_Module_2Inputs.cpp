@@ -127,7 +127,7 @@ uint8_t PnP_Module_2Inputs::GetValues()
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
 	uint8_t value;
 
-	rc = pHub->GetIntLinesValue(pPnPI2C, pPnPI2C->GetPortNumber(), value);
+	rc = pHub->GetIntLinesValue(pPnPI2C->GetPortNumber(), value);
 	if (rc != EBF_OK) {
 		EBF_REPORT_ERROR(rc);
 		return 0;
@@ -168,7 +168,7 @@ uint8_t PnP_Module_2Inputs::GetIntLine(uint8_t line, uint8_t &value)
 	uint8_t rc;
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
 
-	rc = pHub->GetIntLine(pPnPI2C, pPnPI2C->GetPortNumber(), line, value);
+	rc = pHub->GetIntLine(pPnPI2C->GetPortNumber(), line, value);
 	if (rc != EBF_OK) {
 		EBF_REPORT_ERROR(rc);
 		return rc;

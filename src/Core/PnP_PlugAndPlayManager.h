@@ -21,11 +21,13 @@ class PnP_PlugAndPlayManager {
 		EBF_DEBUG_MODULE_NAME("PnP_PlugAndPlayManager");
 
 	public:
-		static const uint8_t maxRoutingLevels = 7;
+		static const uint8_t maxRoutingLevels = 3;	// 0=device, 1=main hub, 2,3=extention hubs
 		static const uint8_t maxEndpoints = 8;
 
 		PnP_PlugAndPlayManager();
 
+		// Initialization function. Should not be called directly.
+		// Called once after creation of the static insstance of that class
 		uint8_t Init();
 
 		static PnP_PlugAndPlayManager *GetInstance();

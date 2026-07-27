@@ -15,6 +15,8 @@
 #include "../../../EventBasedFramework/src/Core/EBF_I2C.h"
 #include "PnP_PlugAndPlayHub.h"
 
+class PnP_PlugAndPlayHub;
+
 class PnP_PlugAndPlayI2C : public EBF_I2C {
 	public:
 		PnP_PlugAndPlayI2C(EBF_I2C &i2c, PnP_PlugAndPlayHub* pHub, uint8_t port);
