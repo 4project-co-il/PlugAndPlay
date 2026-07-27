@@ -49,7 +49,7 @@ class PnP_PlugAndPlayHub : protected EBF_HalInstance {
 		uint8_t AssignEmbeddedHubLine(uint8_t pinNumber, PnP_InterruptMode intMode, InterruptHint intHint);
 
 		typedef struct {
-			EBF_HalInstance** pConnectedInstanes;	// Array of HalInstance pointers assigned to the device connected to that port
+			EBF_HalInstance** pConnectedInstances;	// Array of HalInstance pointers assigned to the device connected to that port
 			uint8_t numberOfEndpoints;				// Number of endpoints on the device connected to that port
 		} PortInfo;
 

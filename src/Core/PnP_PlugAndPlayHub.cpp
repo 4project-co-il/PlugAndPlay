@@ -211,8 +211,8 @@ uint8_t PnP_PlugAndPlayHub::Process()
 	for (uint8_t i=0; i<numberOfPorts; i++) {
 		if (pPortInfo[i].numberOfEndpoints > 0) {
 			for (uint8_t j=0; j<pPortInfo[i].numberOfEndpoints; j++) {
-				if (pPortInfo[i].pConnectedInstanes[j] != 0) {
-					rc = pPortInfo[i].pConnectedInstanes[j]->Process();
+				if (pPortInfo[i].pConnectedInstances[j] != 0) {
+					rc = pPortInfo[i].pConnectedInstances[j]->Process();
 
 					if (rc != EBF_OK) {
 						EBF_REPORT_ERROR(rc);
@@ -241,8 +241,8 @@ void PnP_PlugAndPlayHub::ProcessInterrupt()
 		hint.uint32 = pLogic->GetInterruptHint();
 
 		if (pPortInfo[hint.fields.portNumber].numberOfEndpoints > 0 &&
-			pPortInfo[hint.fields.portNumber].pConnectedInstanes[hint.fields.endpointNumber] != 0) {
-			pPortInfo[hint.fields.portNumber].pConnectedInstanes[hint.fields.endpointNumber]->ProcessInterrupt();
+			pPortInfo[hint.fields.portNumber].pConnectedInstances[hint.fields.endpointNumber] != 0) {
+			pPortInfo[hint.fields.portNumber].pConnectedInstances[hint.fields.endpointNumber]->ProcessInterrupt();
 		}
 	}
 }

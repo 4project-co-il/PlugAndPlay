@@ -203,8 +203,8 @@ uint8_t PnP_PlugAndPlayManager::InitHubs(PnP_PlugAndPlayHub *pHub)
 
 			// Save the pointer
 			pHub->pPortInfo[port].numberOfEndpoints = 1;
-			pHub->pPortInfo[port].pConnectedInstanes = (EBF_HalInstance**)malloc(sizeof(EBF_HalInstance*) * pHub->pPortInfo[port].numberOfEndpoints);
-			pHub->pPortInfo[port].pConnectedInstanes[0] = pNewHub;
+			pHub->pPortInfo[port].pConnectedInstances = (EBF_HalInstance**)malloc(sizeof(EBF_HalInstance*) * pHub->pPortInfo[port].numberOfEndpoints);
+			pHub->pPortInfo[port].pConnectedInstances[0] = pNewHub;
 
 			// Initialize the new HUB connections
 			rc = InitHubs(pNewHub);
@@ -326,8 +326,8 @@ uint8_t PnP_PlugAndPlayManager::AssignDevice(
 
 		// If the connected device is a HUB, search there
 		if (pPortInfo->numberOfEndpoints > 0 &&
-			pPortInfo->pConnectedInstanes[0]->GetId() == PnP_DeviceId::PNP_ID_EXTENDER_HUB) {
-				rc = AssignDevice(pHalInstance, deviceInfo, endpointIndex, pI2CRouter, pAssignedHub, (PnP_PlugAndPlayHub*)(pPortInfo->pConnectedInstanes[0]));
+			pPortInfo->pConnectedInstances[0]->GetId() == PnP_DeviceId::PNP_ID_EXTENDER_HUB) {
+				rc = AssignDevice(pHalInstance, deviceInfo, endpointIndex, pI2CRouter, pAssignedHub, (PnP_PlugAndPlayHub*)(pPortInfo->pConnectedInstances[0]));
 				if (rc == EBF_OK) {
 					// Device was found by inner HUB instance
 					return EBF_OK;
@@ -344,7 +344,7 @@ uint8_t PnP_PlugAndPlayManager::AssignDevice(
 		// Check all endpoints
 		for (endpointIndex=0; endpointIndex<deviceInfo.numberOfEndpoints; endpointIndex++) {
 			// Skip endpoints that were already assigned to a HAL instance
-			if (pPortInfo->numberOfEndpoints > 0 && pPortInfo->pConnectedInstanes[endpointIndex] != NULL) {
+			if (pPortInfo->numberOfEndpoints > 0 && pPortInfo->pConnectedInstances[endpointIndex] != NULL) {
 				continue;
 			}
 
@@ -367,10 +367,10 @@ uint8_t PnP_PlugAndPlayManager::AssignDevice(
 		if (pPortInfo->numberOfEndpoints == 0) {
 			// array of connected instances wasn't initiates yet
 			pPortInfo->numberOfEndpoints = deviceInfo.numberOfEndpoints;
-			pPortInfo->pConnectedInstanes = (EBF_HalInstance**)malloc(sizeof(EBF_HalInstance*) * pPortInfo->numberOfEndpoints);
+			pPortInfo->pConnectedInstances = (EBF_HalInstance**)malloc(sizeof(EBF_HalInstance*) * pPortInfo->numberOfEndpoints);
 		}
 
-		pPortInfo->pConnectedInstanes[endpointIndex] = pHalInstance;
+		pPortInfo->pConnectedInstances[endpointIndex] = pHalInstance;
 		*pI2CRouter = new PnP_PlugAndPlayI2C(*(pI2C), pHub, port);
 		*pAssignedHub = pHub;
 
