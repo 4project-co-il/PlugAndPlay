@@ -108,7 +108,7 @@ uint8_t PnP_ButtonInterface::IsProcessingNeeded() {
 }
 
 uint8_t PnP_ButtonInterface::Process() {
-	ExecuteCallbackEx(pInputProvider->GetValue_IIP(providerIndex));
+	ExecuteCallbackEx(pInputProvider->GetLastValue_IIP(providerIndex));
 
 	return EBF_OK;
 }
