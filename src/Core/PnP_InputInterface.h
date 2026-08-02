@@ -18,6 +18,7 @@ class PnP_InputInterface {
 	public:
 		friend class PnP_Module_2Inputs;
 		friend class PnP_Module_4Inputs;
+		friend class PnP_Module_8Inputs;
 
 		PnP_InputInterface();
 

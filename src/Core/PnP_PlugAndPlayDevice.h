@@ -44,6 +44,7 @@ typedef enum : uint32_t {
 	PNP_ID_2BUTTONS_INPUT,					// Module with 2 buttons connected directly to interrupt lines
 	PNP_ID_SPARKFUN_QWIIC_SERLCD,			// SparkFun QWIIC SerLCD. Both 2 and 4 rows versions
 	PNP_ID_SEEED_MONOCHROME_GROVE_16x2_LCD,	// SeeedStudio monochrome GROVE 16x2 LCD. Black on Yellow, Black on Red, White on Blue
+	PNP_ID_8INPUTS,							// Module with 8 inputs with IO extender chip
 } PnP_DeviceId;
 
 // 2 bytes
@@ -66,6 +67,10 @@ typedef enum : uint8_t {
 
 // 2kBit EEPROM is used for the device (256 bytes)
 
+// NOTE:
+// numberOfInterrupts field is ignored since we can rely on interrupt1Mode and interrupt2Mode
+// fields that might have the value set to PNP_NOT_CONECTED.
+
 // 32 bytes
 typedef struct {
 	// 16 bytes for header data
@@ -73,7 +78,7 @@ typedef struct {
 	uint8_t version;					// 1 byte - version of the data structure
 	uint8_t numberOfPorts : 4;			// For HUBs (up to 8)
 	uint8_t numberOfEndpoints : 4;		// Number of endpoints on the device (up to 8)
-	uint8_t numberOfInterrupts : 2;		// Number of interrupts needed for the device (up to 2)
+	uint8_t numberOfInterrupts : 2;		// !! IGNORED !! Number of interrupts needed for the device (up to 2)
 	uint8_t interrupt1Mode : 3;			// Mode of the first interrupt line (PnP_InterruptMode enumeration)
 	uint8_t interrupt2Mode : 3;			// Mode of the second interrupt line (PnP_InterruptMode enumeration)
 	uint8_t interrupt1Endpoint : 4;		// Endpoint that will receive first interrupt notification

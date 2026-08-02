@@ -25,6 +25,7 @@
 #include "Modules/PnP_Module_2SimpleLeds.h"
 #include "Modules/PnP_Module_2Inputs.h"
 #include "Modules/PnP_Module_4Inputs.h"
+#include "Modules/PnP_Module_8Inputs.h"
 #include "Modules/PnP_Module_2ButtonsInput.h"
 #include "Modules/PnP_Module_SparkFun_QWIIC_SerLCD.h"
 #include "Modules/PnP_Module_Seeed_Monochrome_GROVE_16x2_LCD.h"
