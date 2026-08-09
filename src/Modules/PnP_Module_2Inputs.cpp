@@ -47,15 +47,15 @@ uint8_t PnP_Module_2Inputs::Init()
 	// PnP is interrupt driven, no polling is needed
 	this->SetPollingInterval(EBF_NO_POLLING);
 
-	// Read initial input status
-	lastValues = GetValues();
-
 	// Attach interrupt lines for that device
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);
 	if (rc != EBF_OK) {
 		EBF_REPORT_ERROR(rc);
 		return rc;
 	}
+
+	// Read initial input status
+	lastValues = GetValues();
 
 	return EBF_OK;
 }
