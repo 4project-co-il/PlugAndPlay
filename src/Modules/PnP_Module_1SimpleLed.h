@@ -12,23 +12,53 @@
 #include "../../../EventBasedFramework/src/Core/EBF_Logic.h"
 #include "../Core/PnP_PlugAndPlayDevice.h"
 #include "../Core/PnP_PlugAndPlayI2C.h"
+#include "../Core/PnP_OutputInterface.h"
+#include "../Core/PnP_OutputInterfaceProvider.h"
 
-class PnP_Module_1SimpleLed : protected EBF_HalInstance {
+class PnP_Module_1SimpleLed : protected EBF_HalInstance, public PnP_OutputInterfaceProvider {
 	private:
 		EBF_DEBUG_MODULE_NAME("PnP_Module_1SimpleLed");
 
 	public:
 		PnP_Module_1SimpleLed();
 
+		static const uint8_t numberOfOutputs = 1;
+
 		uint8_t Init();
 
 		uint8_t On();
 		uint8_t Off();
 
+		// Sets current led value
+		uint8_t SetValue(uint8_t value);
+
+		// Assign interface instance
+		uint8_t AssignInterface(PnP_OutputInterface* pIfInstance);
+		uint8_t AssignInterface(PnP_OutputInterface& IfInstance) {
+			return AssignInterface(&IfInstance);
+		}
+
+	protected:
+		uint8_t AssignInterface(uint8_t index, PnP_OutputInterface* pIfInstance) { return this->AssignInterface(pIfInstance); }
+
 	private:
 		uint8_t Process();
 
 	 	uint8_t SetIntLine(uint8_t line, uint8_t value);
+
+		// Every output device will store its value
+		uint8_t outputValue;
+
+	private:
+		// Output interface
+		PnP_OutputInterface *pInterface;
+
+		uint8_t SetValue_OIP(uint8_t index, float value);
+		float GetValue_OIP(uint8_t index);
+		unsigned long millis_OIP() { return this->millis(); }
+		unsigned long micros_OIP() { return this->micros(); }
+		void SetPollingInterval_OIP(uint32_t ms) { this->SetPollingInterval(ms); }
+		uint32_t GetPollingInterval_OIP() { return this->GetPollingInterval(); }
 
 	private:
 		PnP_PlugAndPlayI2C *pPnPI2C;

@@ -4,6 +4,9 @@ PnP_Module_1SimpleLed::PnP_Module_1SimpleLed()
 {
 	this->type = HAL_Type::PnP_DEVICE;
 	this->id = PnP_DeviceId::PNP_ID_1_SIMPLE_LED;
+
+	pInterface = NULL;
+	outputValue = 0;
 }
 
 uint8_t PnP_Module_1SimpleLed::Init()
@@ -50,9 +53,9 @@ uint8_t PnP_Module_1SimpleLed::Init()
 
 uint8_t PnP_Module_1SimpleLed::Process()
 {
-	// Nothing to do
-	// No polling needed
-	SetPollingInterval(EBF_NO_POLLING);
+	if (pInterface != NULL) {
+		return pInterface->Process();
+	}
 
 	return EBF_OK;
 }
@@ -60,13 +63,25 @@ uint8_t PnP_Module_1SimpleLed::Process()
 // Turns the LED ON.
 uint8_t PnP_Module_1SimpleLed::On()
 {
+	outputValue = 1;
+
 	return SetIntLine(0, 1);
 }
 
 // Turns the LED OFF.
 uint8_t PnP_Module_1SimpleLed::Off()
 {
+	outputValue = 0;
+
 	return SetIntLine(0, 0);
+}
+
+// Sets current LED value
+uint8_t PnP_Module_1SimpleLed::SetValue(uint8_t value)
+{
+	outputValue = value;
+
+	return SetIntLine(0, value);
 }
 
 uint8_t PnP_Module_1SimpleLed::SetIntLine(uint8_t line, uint8_t value)
@@ -87,4 +102,40 @@ uint8_t PnP_Module_1SimpleLed::SetIntLine(uint8_t line, uint8_t value)
 	}
 
 	return rc;
+}
+
+uint8_t PnP_Module_1SimpleLed::AssignInterface(PnP_OutputInterface* pIfInstance)
+{
+	// Only simple LED interface is accepted here
+	if (pIfInstance->GetType() != PnP_OutputInterface::SIMPLE_LED) {
+		return EBF_INVALID_STATE;
+	}
+
+	pInterface = pIfInstance;
+
+	return pIfInstance->AssignInterfaceProvider(this, 0);
+}
+
+uint8_t PnP_Module_1SimpleLed::SetValue_OIP(uint8_t index, float value)
+{
+	if (index != 0) {
+		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
+		return EBF_INDEX_OUT_OF_BOUNDS;
+	}
+
+	if (value == 0.0) {
+		return SetValue((uint8_t)0);
+	} else {
+		return SetValue((uint8_t)1);
+	}
+}
+
+float PnP_Module_1SimpleLed::GetValue_OIP(uint8_t index)
+{
+	if (index != 0) {
+		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
+		return 0.0;
+	}
+
+	return (float)outputValue;
 }

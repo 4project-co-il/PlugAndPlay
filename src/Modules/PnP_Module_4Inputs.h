@@ -61,6 +61,7 @@ class PnP_Module_4Inputs : public EBF_Module_4Inputs, public PnP_InputInterfaceP
 		// Override ExecuteCallback and Process to add assigned interfaces processing logic
 		void ExecuteCallback();
 		uint8_t Process();
+		void SetPollingInterval(uint32_t ms);
 };
 
 #endif
