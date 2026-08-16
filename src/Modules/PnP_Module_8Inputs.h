@@ -48,6 +48,7 @@ class PnP_Module_8Inputs : public EBF_Module_8Inputs, public PnP_InputInterfaceP
 		uint8_t GetValue_IIP(uint8_t index) { return this->GetValue(index); }
 		uint8_t GetLastValue_IIP(uint8_t index) { return this->GetLastValue(index); }
 		unsigned long millis_IIP() { return this->millis(); }
+		unsigned long micros_IIP() { return this->micros(); }
 		void SetPollingInterval_IIP(uint32_t ms) { this->SetPollingInterval(ms); }
 		uint32_t GetPollingInterval_IIP() { return this->GetPollingInterval(); }
 
