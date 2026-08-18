@@ -248,6 +248,11 @@ uint8_t PnP_Module_2Inputs::AssignInterface(uint8_t index, PnP_InputInterface* p
 		return EBF_INDEX_OUT_OF_BOUNDS;
 	}
 
+	if (isInterfaceAssigned & 1<<index) {
+		EBF_REPORT_ERROR(EBF_INVALID_STATE);
+		return EBF_INVALID_STATE;
+	}
+
 	onChangeCallback[index] = (EBF_CallbackType)pIfInstance;
 	isInterfaceAssigned |= 1<<index;
 

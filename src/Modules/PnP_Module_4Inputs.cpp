@@ -4,6 +4,8 @@ PnP_Module_4Inputs::PnP_Module_4Inputs() : EBF_Module_4Inputs(NULL)
 {
 	this->type = HAL_Type::PnP_DEVICE;
 	this->id = PnP_DeviceId::PNP_ID_4INPUTS;
+
+	this->isInterfaceAssigned = 0;
 }
 
 uint8_t PnP_Module_4Inputs::Init()
@@ -96,6 +98,11 @@ uint8_t PnP_Module_4Inputs::AssignInterface(uint8_t index, PnP_InputInterface* p
 	if (index >= numberOfInputs) {
 		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
 		return EBF_INDEX_OUT_OF_BOUNDS;
+	}
+
+	if (isInterfaceAssigned & 1<<index) {
+		EBF_REPORT_ERROR(EBF_INVALID_STATE);
+		return EBF_INVALID_STATE;
 	}
 
 	onChangeCallback[index] = (EBF_CallbackType)pIfInstance;
