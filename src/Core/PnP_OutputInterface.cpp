@@ -10,6 +10,10 @@ PnP_OutputInterface::PnP_OutputInterface()
 
 uint8_t PnP_OutputInterface::AssignInterfaceProvider(PnP_OutputInterfaceProvider* pProvider, uint8_t index)
 {
+	if (this->pOutputProvider != NULL) {
+		return EBF_INVALID_STATE;
+	}
+
 	this->pOutputProvider = pProvider;
 	this->providerIndex = index;
 

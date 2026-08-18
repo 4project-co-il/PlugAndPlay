@@ -108,6 +108,12 @@ uint8_t PnP_Module_1SimpleLed::AssignInterface(PnP_OutputInterface* pIfInstance)
 {
 	// Only simple LED interface is accepted here
 	if (pIfInstance->GetType() != PnP_OutputInterface::SIMPLE_LED) {
+		EBF_REPORT_ERROR(EBF_INVALID_STATE);
+		return EBF_INVALID_STATE;
+	}
+
+	if (pInterface != NULL) {
+		EBF_REPORT_ERROR(EBF_INVALID_STATE);
 		return EBF_INVALID_STATE;
 	}
 
