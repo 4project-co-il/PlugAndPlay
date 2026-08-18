@@ -66,18 +66,17 @@ class PnP_Module_2Inputs : protected EBF_HalInstance, public PnP_InputInterfaceP
 			return pLogic->IsRunFromIsr();
 		}
 
-	protected:
-		void SetPollingInterval(uint32_t ms);
-
 	private:
 		uint8_t Process();
 		void ProcessInterrupt();
+		void SetPollingInterval(uint32_t ms);
 
 	 	uint8_t GetIntLine(uint8_t line, uint8_t &value);
 
 		uint8_t GetValue_IIP(uint8_t index) { return this->GetValue(index); }
 		uint8_t GetLastValue_IIP(uint8_t index) { return this->GetLastValue(index); }
 		unsigned long millis_IIP() { return this->millis(); }
+		unsigned long micros_IIP() { return this->micros(); }
 		void SetPollingInterval_IIP(uint32_t ms) { this->SetPollingInterval(ms); }
 		uint32_t GetPollingInterval_IIP() { return this->GetPollingInterval(); }
 

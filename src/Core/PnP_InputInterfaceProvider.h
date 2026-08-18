@@ -35,6 +35,8 @@ class PnP_InputInterfaceProvider {
 
 		// Access to current millis value of the HAL instance via InputInterfaceProvider
 		virtual unsigned long millis_IIP() = 0;
+		// Access to current micros value of the HAL instance via InputInterfaceProvider
+		virtual unsigned long micros_IIP() = 0;
 
 		// Access to polling interval of the HAL instance via InputInterfaceProvider
 		virtual void SetPollingInterval_IIP(uint32_t ms) = 0;
