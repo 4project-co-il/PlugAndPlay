@@ -29,8 +29,12 @@ class PnP_Module_2SimpleLeds : protected EBF_HalInstance, public PnP_OutputInter
 		uint8_t On(uint8_t index);
 		uint8_t Off(uint8_t index);
 
+		// Set value of specified index
+		uint8_t SetValue(uint8_t index, uint8_t value);
 		// Set values of both lines with one call
-		uint8_t SetValue(uint8_t value);
+		uint8_t SetValues(uint8_t values);
+		// Gets current led value for specified index
+		uint8_t GetValue(uint8_t index);
 
 		// Assign interface instance
 		uint8_t AssignInterface(uint8_t index, PnP_OutputInterface* pIfInstance);
@@ -43,9 +47,7 @@ class PnP_Module_2SimpleLeds : protected EBF_HalInstance, public PnP_OutputInter
 		uint8_t Process();
 
 		uint8_t SetIntLine(uint8_t line, uint8_t value);
-
-		// Every output device will store its value
-		uint8_t outputValue;
+	 	uint8_t GetIntLine(uint8_t line, uint8_t &value);
 
 	private:
 		// Output interface

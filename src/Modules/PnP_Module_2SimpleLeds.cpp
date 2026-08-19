@@ -6,8 +6,6 @@ PnP_Module_2SimpleLeds::PnP_Module_2SimpleLeds()
 	this->id = PnP_DeviceId::PNP_ID_2_SIMPLE_LEDS;
 
 	memset(pInterfaces, 0, sizeof(PnP_OutputInterface*) * numberOfOutputs);
-
-	outputValue = 0;
 }
 
 uint8_t PnP_Module_2SimpleLeds::Init()
@@ -73,17 +71,12 @@ uint8_t PnP_Module_2SimpleLeds::Process()
 }
 
 // Set both interrupt lines values
-uint8_t PnP_Module_2SimpleLeds::SetValue(uint8_t value)
+uint8_t PnP_Module_2SimpleLeds::SetValues(uint8_t values)
 {
 	uint8_t rc;
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
 
-	// Clear 2 last bits
-	outputValue &= 0xFC;
-	// Set the last 2 bits that represent the 2 LEDs
-	outputValue |= (value & 0x3);
-
-	rc = pHub->SetIntLinesValue(pPnPI2C->GetPortNumber(), value);
+	rc = pHub->SetIntLinesValue(pPnPI2C->GetPortNumber(), values & 0x03);
 	if (rc != EBF_OK) {
 		EBF_REPORT_ERROR(rc);
 		return rc;
@@ -95,8 +88,10 @@ uint8_t PnP_Module_2SimpleLeds::SetValue(uint8_t value)
 // Turns the LED ON.
 uint8_t PnP_Module_2SimpleLeds::On(uint8_t index)
 {
-	outputValue &= ~(1<<index);
-	outputValue |= 1<<index;
+	if (index >= numberOfOutputs) {
+		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
+		return EBF_INDEX_OUT_OF_BOUNDS;
+	}
 
 	return SetIntLine(index, 1);
 }
@@ -104,10 +99,43 @@ uint8_t PnP_Module_2SimpleLeds::On(uint8_t index)
 // Turns the LED OFF.
 uint8_t PnP_Module_2SimpleLeds::Off(uint8_t index)
 {
-	outputValue &= ~(1<<index);
-	outputValue |= 1<<index;
+	if (index >= numberOfOutputs) {
+		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
+		return EBF_INDEX_OUT_OF_BOUNDS;
+	}
 
 	return SetIntLine(index, 0);
+}
+
+// Set value of specified index
+uint8_t PnP_Module_2SimpleLeds::SetValue(uint8_t index, uint8_t value)
+{
+	if (index >= numberOfOutputs) {
+		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
+		return EBF_INDEX_OUT_OF_BOUNDS;
+	}
+
+	return SetIntLine(index, value);
+}
+
+// Returns 1 if output is HIGH, 0 if LOW
+uint8_t PnP_Module_2SimpleLeds::GetValue(uint8_t index)
+{
+	uint8_t rc;
+	uint8_t value;
+
+	if (index >= numberOfOutputs) {
+		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
+		return 0;
+	}
+
+	rc = GetIntLine(index, value);
+	if (rc != EBF_OK) {
+		EBF_REPORT_ERROR(rc);
+		return 0;
+	}
+
+	return value;
 }
 
 uint8_t PnP_Module_2SimpleLeds::SetIntLine(uint8_t line, uint8_t value)
@@ -122,6 +150,26 @@ uint8_t PnP_Module_2SimpleLeds::SetIntLine(uint8_t line, uint8_t value)
 	}
 
 	rc = pHub->SetIntLine(pPnPI2C->GetPortNumber(), line, value & 0x03);
+	if (rc != EBF_OK) {
+		EBF_REPORT_ERROR(rc);
+		return rc;
+	}
+
+	return EBF_OK;
+}
+
+uint8_t PnP_Module_2SimpleLeds::GetIntLine(uint8_t line, uint8_t &value)
+{
+	uint8_t rc;
+	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
+
+	// Line can be only 0 or 1 (the interrupt line number)
+	if (line > 1) {
+		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
+		return EBF_INDEX_OUT_OF_BOUNDS;
+	}
+
+	rc = pHub->GetIntLine(pPnPI2C->GetPortNumber(), line, value);
 	if (rc != EBF_OK) {
 		EBF_REPORT_ERROR(rc);
 		return rc;
@@ -161,9 +209,9 @@ uint8_t PnP_Module_2SimpleLeds::SetValue_OIP(uint8_t index, float value)
 	}
 
 	if (value == 0.0) {
-		return SetValue((uint8_t)0);
+		return SetValue(index, (uint8_t)0);
 	} else {
-		return SetValue((uint8_t)1);
+		return SetValue(index, (uint8_t)1);
 	}
 }
 
@@ -174,10 +222,10 @@ float PnP_Module_2SimpleLeds::GetValue_OIP(uint8_t index)
 		return 0.0;
 	}
 
-	if ((outputValue & 1<<index) == 0) {
+	if (GetValue(index) == 0) {
 		return 0.0;
 	} else {
-		return 1.0;
+		return 100.0;
 	}
 }
 

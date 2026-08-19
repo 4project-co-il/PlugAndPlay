@@ -6,7 +6,6 @@ PnP_Module_1SimpleLed::PnP_Module_1SimpleLed()
 	this->id = PnP_DeviceId::PNP_ID_1_SIMPLE_LED;
 
 	pInterface = NULL;
-	outputValue = 0;
 }
 
 uint8_t PnP_Module_1SimpleLed::Init()
@@ -67,25 +66,34 @@ uint8_t PnP_Module_1SimpleLed::Process()
 // Turns the LED ON.
 uint8_t PnP_Module_1SimpleLed::On()
 {
-	outputValue = 1;
-
 	return SetIntLine(0, 1);
 }
 
 // Turns the LED OFF.
 uint8_t PnP_Module_1SimpleLed::Off()
 {
-	outputValue = 0;
-
 	return SetIntLine(0, 0);
 }
 
 // Sets current LED value
 uint8_t PnP_Module_1SimpleLed::SetValue(uint8_t value)
 {
-	outputValue = value;
-
 	return SetIntLine(0, value);
+}
+
+// Returns 1 if output is HIGH, 0 if LOW
+uint8_t PnP_Module_1SimpleLed::GetValue()
+{
+	uint8_t rc;
+	uint8_t value;
+
+	rc = GetIntLine(0, value);
+	if (rc != EBF_OK) {
+		EBF_REPORT_ERROR(rc);
+		return 0;
+	}
+
+	return value;
 }
 
 uint8_t PnP_Module_1SimpleLed::SetIntLine(uint8_t line, uint8_t value)
@@ -106,6 +114,20 @@ uint8_t PnP_Module_1SimpleLed::SetIntLine(uint8_t line, uint8_t value)
 	}
 
 	return rc;
+}
+
+uint8_t PnP_Module_1SimpleLed::GetIntLine(uint8_t line, uint8_t &value)
+{
+	uint8_t rc;
+	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
+
+	rc = pHub->GetIntLine(pPnPI2C->GetPortNumber(), line, value);
+	if (rc != EBF_OK) {
+		EBF_REPORT_ERROR(rc);
+		return rc;
+	}
+
+	return EBF_OK;
 }
 
 uint8_t PnP_Module_1SimpleLed::AssignInterface(PnP_OutputInterface* pIfInstance)
@@ -147,5 +169,9 @@ float PnP_Module_1SimpleLed::GetValue_OIP(uint8_t index)
 		return 0.0;
 	}
 
-	return (float)outputValue;
+	if(GetValue() == 0) {
+		return 0.0;
+	} else {
+		return 100.0;
+	}
 }
