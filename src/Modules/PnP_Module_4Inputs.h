@@ -27,15 +27,6 @@ class PnP_Module_4Inputs : public EBF_Module_4Inputs, public PnP_InputInterfaceP
 
 		uint8_t Init();
 
-		// Returns current value of the specified input line
-		uint8_t GetValue(uint8_t index) { return EBF_Module_4Inputs::GetValue(index); }
-		// Returns current values of all the input lines
-		uint8_t GetValues() { return EBF_Module_4Inputs::GetValues(); }
-		// Returns last value of the specified input line as it appeared while reading from the chip
-		uint8_t GetLastValue(uint8_t index) { return EBF_Module_4Inputs::GetLastValue(index); }
-		// Returns all last values as it appeared while reading from the chip
-		uint8_t GetLastValues() { return EBF_Module_4Inputs::GetLastValues(); }
-
 		PnP_InputInterface* GetCurrentInterface();
 
 		// Assign interface instance to specified input index
@@ -45,6 +36,7 @@ class PnP_Module_4Inputs : public EBF_Module_4Inputs, public PnP_InputInterfaceP
 		}
 
 	private:
+		// Input Interface Provider APIs
 		uint8_t GetValue_IIP(uint8_t index) { return this->GetValue(index); }
 		uint8_t GetLastValue_IIP(uint8_t index) { return this->GetLastValue(index); }
 		unsigned long millis_IIP() { return this->millis(); }

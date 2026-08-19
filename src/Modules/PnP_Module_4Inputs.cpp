@@ -10,7 +10,7 @@ PnP_Module_4Inputs::PnP_Module_4Inputs() : EBF_Module_4Inputs(NULL)
 
 uint8_t PnP_Module_4Inputs::Init()
 {
-	uint8_t rc = EBF_OK;
+	uint8_t rc;
 	PnP_DeviceInfo deviceInfo;
 	uint8_t endpointIndex;
 	PnP_PlugAndPlayI2C *pPnPI2C;
@@ -21,6 +21,7 @@ uint8_t PnP_Module_4Inputs::Init()
 	// Assign the current instance to physical PnP device and get all needed information
 	rc = pPnpManager->AssignDevice(this, deviceInfo, endpointIndex, &pPnPI2C, &pAssignedHub);
 	if(rc != EBF_OK) {
+		EBF_REPORT_ERROR(rc);
 		return rc;
 	}
 
@@ -29,6 +30,7 @@ uint8_t PnP_Module_4Inputs::Init()
 	// Initialize the device
 	rc = EBF_Module_4Inputs::Init(deviceInfo.endpointData[endpointIndex].i2cAddress);
 	if (rc != EBF_OK) {
+		EBF_REPORT_ERROR(rc);
 		return rc;
 	}
 
@@ -42,10 +44,11 @@ uint8_t PnP_Module_4Inputs::Init()
 	// Attach interrupt lines for that device
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);
 	if (rc != EBF_OK) {
+		EBF_REPORT_ERROR(rc);
 		return rc;
 	}
 
-	return rc;
+	return EBF_OK;
 }
 
 void PnP_Module_4Inputs::ExecuteCallback()
@@ -71,6 +74,7 @@ uint8_t PnP_Module_4Inputs::Process()
 
 	rc = EBF_Module_4Inputs::Process();
 	if (rc != EBF_OK) {
+		EBF_REPORT_ERROR(rc);
 		return rc;
 	}
 
@@ -108,7 +112,7 @@ uint8_t PnP_Module_4Inputs::AssignInterface(uint8_t index, PnP_InputInterface* p
 	onChangeCallback[index] = (EBF_CallbackType)pIfInstance;
 	isInterfaceAssigned |= 1<<index;
 
-	pIfInstance->SetInitialValue(EBF_Module_4Inputs::GetLastValue(index));
+	pIfInstance->SetInitialValue(GetLastValue(index));
 
 	return pIfInstance->AssignInterfaceProvider(this, index);
 }

@@ -38,6 +38,10 @@ uint8_t PnP_Module_2SimpleLeds::Init()
 		return rc;
 	}
 
+	// Fix type and ID after the EBF_Instance init
+	this->type = HAL_Type::PnP_DEVICE;
+	this->id = PnP_DeviceId::PNP_ID_2_SIMPLE_LEDS;
+
 	// PnP is interrupt driven, no polling is needed
 	this->SetPollingInterval(EBF_NO_POLLING);
 
