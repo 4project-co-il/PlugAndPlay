@@ -12,11 +12,14 @@
 #include "../../../EventBasedFramework/src/Core/EBF_Logic.h"
 #include "PnP_OutputInterfaceProvider.h"
 #include "../Modules/PnP_Module_1SimpleLed.h"
+#include "../Modules/PnP_Module_2SimpleLeds.h"
+#include "../Modules/PnP_Module_8Outputs.h"
 
 class PnP_OutputInterface {
 	public:
 		friend class PnP_Module_1SimpleLed;
 		friend class PnP_Module_2SimpleLeds;
+		friend class PnP_Module_8Outputs;
 
 		PnP_OutputInterface();
 

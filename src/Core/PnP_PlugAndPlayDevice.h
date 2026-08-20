@@ -45,6 +45,7 @@ typedef enum : uint32_t {
 	PNP_ID_SPARKFUN_QWIIC_SERLCD,			// SparkFun QWIIC SerLCD. Both 2 and 4 rows versions
 	PNP_ID_SEEED_MONOCHROME_GROVE_16x2_LCD,	// SeeedStudio monochrome GROVE 16x2 LCD. Black on Yellow, Black on Red, White on Blue
 	PNP_ID_8INPUTS,							// Module with 8 inputs with IO extender chip
+	PNP_ID_8OUTPUTS,						// Module with 8 outputs with PWM controller chip
 } PnP_DeviceId;
 
 // 2 bytes
