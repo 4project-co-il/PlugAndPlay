@@ -21,6 +21,7 @@
 #include "Core/PnP_SwitchInterface.h"
 #include "Core/PnP_ButtonInterface.h"
 #include "Core/PnP_SimpleLedInterface.h"
+#include "Core/PnP_DirectPwmInterface.h"
 #include "Modules/PnP_Module_STTS22H_TemperatureSensor.h"
 #include "Modules/PnP_Module_1SimpleLed.h"
 #include "Modules/PnP_Module_2SimpleLeds.h"
