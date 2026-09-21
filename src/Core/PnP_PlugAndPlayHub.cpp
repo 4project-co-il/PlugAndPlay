@@ -20,6 +20,10 @@ uint8_t PnP_PlugAndPlayHub::Init(PnP_PlugAndPlayHub *pParentHub, uint8_t parentP
 {
 	uint8_t rc;
 
+	// Init the chips
+	intControllerChip.Init(0);
+	i2cSwitchChip.Init(0);
+
 	this->numberOfPorts = deviceInfo.numberOfPorts;
 	this->hubInt1Mode = (PnP_InterruptMode)deviceInfo.interrupt1Mode;
 	this->hubInt2Mode = (PnP_InterruptMode)deviceInfo.interrupt2Mode;
