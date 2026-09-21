@@ -30,6 +30,9 @@ class PnP_OutputInterfaceProvider {
 		// Get current value of the output
 		virtual float GetValue_OIP(uint8_t index) = 0;
 
+		// Get output update frequency
+		virtual uint16_t GetUpdateFrequency(uint8_t index) = 0;
+
 		// Access to current millis value of the HAL instance via OutputInterfaceProvider
 		virtual unsigned long millis_OIP() = 0;
 		// Access to current micros value of the HAL instance via OutputInterfaceProvider

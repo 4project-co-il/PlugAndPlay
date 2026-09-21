@@ -55,6 +55,7 @@ class PnP_Module_1SimpleLed : protected EBF_HalInstance, public PnP_OutputInterf
 
 		uint8_t SetValue_OIP(uint8_t index, float value);
 		float GetValue_OIP(uint8_t index);
+		uint16_t GetUpdateFrequency(uint8_t index) { return 0xFFFF; }
 		unsigned long millis_OIP() { return this->millis(); }
 		unsigned long micros_OIP() { return this->micros(); }
 		void SetPollingInterval_OIP(uint32_t ms) { this->SetPollingInterval(ms); }
