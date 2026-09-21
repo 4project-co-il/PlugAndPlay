@@ -51,15 +51,6 @@ class PnP_Module_2Inputs : protected EBF_HalInstance, public PnP_InputInterfaceP
 		// where you can call the GetEventIndex to know which input actually changed
 		uint8_t GetEventIndex();
 
-		typedef union {
-			struct {
-				uint32_t index : 3;		// up to 8 inputs
-				uint32_t event : 8;		// input event that should be executed
-				uint32_t reserved : 21;
-			} fields;
-			uint32_t uint32;
-		} PostponedInterruptData;
-
 		uint8_t PostponeProcessing(uint8_t eventIndex, uint8_t inputValues);
 		uint8_t InInterrupt() {
 			EBF_Logic *pLogic = EBF_Logic::GetInstance();
@@ -94,6 +85,15 @@ class PnP_Module_2Inputs : protected EBF_HalInstance, public PnP_InputInterfaceP
 
 		// Interface assigned flag
 		uint8_t isInterfaceAssigned;
+
+		typedef union {
+			struct {
+				uint32_t index : 3;		// up to 8 inputs
+				uint32_t event : 8;		// input event that should be executed
+				uint32_t reserved : 21;
+			} fields;
+			uint32_t uint32;
+		} PostponedInterruptData;
 };
 
 #endif
