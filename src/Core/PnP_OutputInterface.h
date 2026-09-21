@@ -28,6 +28,7 @@ class PnP_OutputInterface {
 			SIMPLE_LED,			// Simple led can only be turned ON or OFF
 			ADVANCED_LED,		// Advanced led have brightness control
 			RELAY,				// Relay can be turned ON or OFF
+			SERVO_MOTOR,		// Servo motor with min and max positioning and scaling
 		};
 
 		virtual OutputInterface_Type GetType() = 0;
