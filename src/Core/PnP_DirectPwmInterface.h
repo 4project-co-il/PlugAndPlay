@@ -21,10 +21,7 @@ class PnP_DirectPwmInterface : public PnP_OutputInterface {
 
 		virtual OutputInterface_Type GetType() { return OutputInterface_Type::DIRECT_PWM; }
 
-		// Sets PWM timing value
-		// float percent paramenter: 0=Complete OFF, 50=50% width ON/OFF, 100=Complete ON
-		uint8_t SetValue(float value);
-		uint8_t GetValue();
+		// The SetValue and GetValue are inherited from the PnP_OutputInterface class
 
 	protected:
 		uint8_t IsProcessingNeeded() { return 0; }

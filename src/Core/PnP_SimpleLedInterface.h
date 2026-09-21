@@ -27,7 +27,8 @@ class PnP_SimpleLedInterface : public PnP_OutputInterface {
 		uint8_t Blink(uint16_t msOn, uint16_t msOff);
 
 		uint8_t SetValue(uint8_t value);
-		uint8_t GetValue();
+		uint8_t SetValue(float value) { return this->SetValue((uint8_t)value); }	// PnP_OutputInterface override
+		float GetValue();
 
 	protected:
 		uint8_t IsProcessingNeeded();

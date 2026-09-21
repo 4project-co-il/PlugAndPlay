@@ -32,8 +32,8 @@ class PnP_OutputInterface {
 
 		virtual OutputInterface_Type GetType() = 0;
 
-		uint8_t SetValue(float value) { return pOutputProvider->SetValue_OIP(providerIndex, value); }
-		float GetValue() { return pOutputProvider->GetValue_OIP(providerIndex); }
+		virtual uint8_t SetValue(float value) { return pOutputProvider->SetValue_OIP(providerIndex, value); }
+		virtual float GetValue() { return pOutputProvider->GetValue_OIP(providerIndex); }
 
 	protected:
 		PnP_OutputInterfaceProvider* pOutputProvider;

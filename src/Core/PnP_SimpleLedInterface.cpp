@@ -8,28 +8,38 @@ PnP_SimpleLedInterface::PnP_SimpleLedInterface()
 // SetValue acts as an ON/OFF function, value == 0 will perform as OFF, any other value as ON
 uint8_t PnP_SimpleLedInterface::SetValue(uint8_t value)
 {
+	uint8_t rc;
+
 	if (value == 0) {
 		state = LED_OFF;
+
+		rc = pOutputProvider->SetValue_OIP(providerIndex, 0.0);
 	} else {
 		state = LED_ON;
+
+		rc = pOutputProvider->SetValue_OIP(providerIndex, 100.0);
 	}
 
-	return this->pOutputProvider->SetValue_OIP(providerIndex, value);
+	if (rc != EBF_OK) {
+		EBF_REPORT_ERROR(rc);
+	}
+
+	return rc;
 }
 
 // GetValue returns current status of the led (ON or OFF)
-uint8_t PnP_SimpleLedInterface::GetValue()
+float PnP_SimpleLedInterface::GetValue()
 {
 	switch (state)
 	{
 		case LED_OFF:
 		case LED_BLINKING_OFF:
-			return 0;
+			return 0.0;
 
 		case LED_ON:
 		case LED_BLINKING_ON:
 
-			return 1;
+			return 100.0;
 	}
 
 	return 0;
@@ -39,14 +49,14 @@ uint8_t PnP_SimpleLedInterface::On()
 {
 	state = LED_ON;
 
-	return this->pOutputProvider->SetValue_OIP(providerIndex, 1);
+	return pOutputProvider->SetValue_OIP(providerIndex, 100.0);
 }
 
 uint8_t PnP_SimpleLedInterface::Off()
 {
 	state = LED_OFF;
 
-	return this->pOutputProvider->SetValue_OIP(providerIndex, 0);
+	return pOutputProvider->SetValue_OIP(providerIndex, 0.0);
 }
 
 // Turns on for msOn milliSeconds and stay off for msOff milliSeconds
