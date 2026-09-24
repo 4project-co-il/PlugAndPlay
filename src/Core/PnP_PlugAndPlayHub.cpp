@@ -31,8 +31,7 @@ uint8_t PnP_PlugAndPlayHub::Init(PnP_PlugAndPlayHub *pParentHub, uint8_t parentP
 	// This class handles only the HUB devices
 	if (deviceInfo.deviceIDs[0] != PnP_DeviceId::PNP_ID_EMBEDDED_HUB &&
 		deviceInfo.deviceIDs[0] != PnP_DeviceId::PNP_ID_EXTENDER_HUB) {
-		EBF_REPORT_ERROR(EBF_INVALID_STATE);
-		return EBF_INVALID_STATE;
+		EBF_REPORT_AND_RETURN(EBF_INVALID_STATE);
 	}
 
 	// Convert EBF_I2C used for I2C communication to PnP_PlugAndPlayI2C in order to utilize automatic port switching
@@ -58,8 +57,7 @@ uint8_t PnP_PlugAndPlayHub::Init(PnP_PlugAndPlayHub *pParentHub, uint8_t parentP
 	// for every registered HAL instance.
 //	rc = EBF_HalInstance::Init(HAL_Type::I2C_INTERFACE, parentPort);
 //	if (rc != EBF_OK) {
-//		EBF_REPORT_ERROR(rc);
-//		return rc;
+//		EBF_REPORT_AND_RETURN(rc);
 //	}
 
 	// Fix type and ID after the EBF_Instance init
@@ -71,8 +69,7 @@ uint8_t PnP_PlugAndPlayHub::Init(PnP_PlugAndPlayHub *pParentHub, uint8_t parentP
 	// Allocate port info structure. HAL pointer will be used to pass the interrrupts to connected instances
 	pPortInfo = (PortInfo*)malloc(sizeof(PortInfo) * numberOfPorts);
 	if(pPortInfo == NULL) {
-		EBF_REPORT_ERROR(EBF_NOT_ENOUGH_MEMORY);
-		return EBF_NOT_ENOUGH_MEMORY;
+		EBF_REPORT_AND_RETURN(EBF_NOT_ENOUGH_MEMORY);
 	}
 
 	memset(pPortInfo, 0, sizeof(PortInfo) * numberOfPorts);
@@ -89,8 +86,7 @@ uint8_t PnP_PlugAndPlayHub::Init(PnP_PlugAndPlayHub *pParentHub, uint8_t parentP
 			// Reset the switching that might be left from previous run
 			rc = i2cSwitchChip.Reset();
 			if (rc != EBF_OK) {
-				EBF_REPORT_ERROR(rc);
-				return rc;
+				EBF_REPORT_AND_RETURN(rc);
 			}
 		}
 
@@ -103,28 +99,24 @@ uint8_t PnP_PlugAndPlayHub::Init(PnP_PlugAndPlayHub *pParentHub, uint8_t parentP
 			// Configure the chip to all inputs, latch enable and all interrupts masked
 			rc = intControllerChip.SetConfiguration(0xFFFF);
 			if (rc != EBF_OK) {
-				EBF_REPORT_ERROR(rc);
-				return rc;
+				EBF_REPORT_AND_RETURN(rc);
 			}
 
 			rc = intControllerChip.SetLatching(0xFFFF);
 			if (rc != EBF_OK) {
-				EBF_REPORT_ERROR(rc);
-				return rc;
+				EBF_REPORT_AND_RETURN(rc);
 			}
 
 			// Disable all 16bits. Specific line will be enabled based on connected devices
 			rc = intControllerChip.SetInterruptMask(0xFFFF);
 			if (rc != EBF_OK) {
-				EBF_REPORT_ERROR(rc);
-				return rc;
+				EBF_REPORT_AND_RETURN(rc);
 			}
 
 			// Get initial input lines status to reset the interrupts
 			rc = intControllerChip.GetInput(lastInputs);
 			if (rc != EBF_OK) {
-				EBF_REPORT_ERROR(rc);
-				return rc;
+				EBF_REPORT_AND_RETURN(rc);
 			}
 		}
 	}
@@ -145,13 +137,13 @@ uint8_t PnP_PlugAndPlayHub::Init(PnP_PlugAndPlayHub *pParentHub, uint8_t parentP
 	// For embedded HUBs with interrupt controllers, assign the interrupt lines on initialization
 	// Embedded HUBs without interrupt controller will assign the lines for every attached device
 	if (this->GetId() == PnP_DeviceId::PNP_ID_EMBEDDED_HUB && intControllerChip.i2cAddress != 0) {
-			rc = AssignInterruptLines(parentPort, 0, deviceInfo);
-			if (rc != EBF_OK) {
-				return rc;
-			}
+		rc = AssignInterruptLines(parentPort, 0, deviceInfo);
+		if (rc != EBF_OK) {
+			EBF_REPORT_AND_RETURN(rc);
 		}
+	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 uint8_t PnP_PlugAndPlayHub::AssignEmbeddedHubLine(uint8_t pinNumber, PnP_InterruptMode intMode, InterruptHint intHint)
@@ -185,13 +177,12 @@ uint8_t PnP_PlugAndPlayHub::AssignEmbeddedHubLine(uint8_t pinNumber, PnP_Interru
 				rc = pLogic->AttachInterrupt(pinNumber, this, GetArduinoInterruptMode(intMode), intHint.uint32);
 
 				if (rc != EBF_OK) {
-					EBF_REPORT_ERROR(rc);
-					return rc;
+					EBF_REPORT_AND_RETURN(rc);
 				}
 			}
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 uint8_t PnP_PlugAndPlayHub::AssignInterruptControllerLine(uint8_t intLine, PnP_InterruptMode intMode)
@@ -210,14 +201,14 @@ uint8_t PnP_PlugAndPlayHub::AssignInterruptControllerLine(uint8_t intLine, PnP_I
 		// Change the line to output mode
 		rc = intControllerChip.GetConfiguration(config);
 		if (rc != EBF_OK) {
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 
 		config &= ~(1<<intLine);
 
 		rc = intControllerChip.SetConfiguration(config);
 		if (rc != EBF_OK) {
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 
 		break;
@@ -236,14 +227,14 @@ uint8_t PnP_PlugAndPlayHub::AssignInterruptControllerLine(uint8_t intLine, PnP_I
 
 		rc = intControllerChip.GetInterruptMask(intMask);
 		if (rc != EBF_OK) {
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 
 		intMask &= ~(1<<intLine);
 
 		rc = intControllerChip.SetInterruptMask(intMask);
 		if (rc != EBF_OK) {
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 
 		break;
@@ -254,7 +245,7 @@ uint8_t PnP_PlugAndPlayHub::AssignInterruptControllerLine(uint8_t intLine, PnP_I
 		break;
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 uint8_t PnP_PlugAndPlayHub::AssignInterruptLines(uint8_t portNumber, uint8_t endpointNumber, PnP_DeviceInfo &deviceInfo)
@@ -288,13 +279,13 @@ uint8_t PnP_PlugAndPlayHub::AssignInterruptLines(uint8_t portNumber, uint8_t end
 			hint.uint32 = pLogic->GetInterruptHint(interruptMapping[portNumber*2 + 0]);
 			if (hint.fields.attached) {
 				// We already attached that interrupt, no need to do it again
-				return EBF_OK;
+				EBF_REPORT_AND_RETURN(EBF_OK);
 			}
 
 			hint.uint32 = pLogic->GetInterruptHint(interruptMapping[portNumber*2 + 1]);
 			if (hint.fields.attached) {
 				// We already attached that interrupt, no need to do it again
-				return EBF_OK;
+				EBF_REPORT_AND_RETURN(EBF_OK);
 			}
 
 			// interrupt hint will include port number shifted one bit left and the LSB specifying
@@ -308,15 +299,13 @@ uint8_t PnP_PlugAndPlayHub::AssignInterruptLines(uint8_t portNumber, uint8_t end
 
 			rc = this->AssignEmbeddedHubLine(interruptMapping[portNumber*2 + 0], int1Mode, hint);
 			if (rc != EBF_OK) {
-				EBF_REPORT_ERROR(rc);
-				return rc;
+				EBF_REPORT_AND_RETURN(rc);
 			}
 
 			hint.fields.interruptNumber = 1;
 			rc = this->AssignEmbeddedHubLine(interruptMapping[portNumber*2 + 1], int2Mode, hint);
 			if (rc != EBF_OK) {
-				EBF_REPORT_ERROR(rc);
-				return rc;
+				EBF_REPORT_AND_RETURN(rc);
 			}
 		} else {
 			// Embedded HUB with interrupt controller
@@ -331,13 +320,13 @@ uint8_t PnP_PlugAndPlayHub::AssignInterruptLines(uint8_t portNumber, uint8_t end
 			// INT 1
 			rc = AssignInterruptControllerLine(portNumber*2 + 0, int1Mode);
 			if (rc != EBF_OK) {
-				return rc;
+				EBF_REPORT_AND_RETURN(rc);
 			}
 
 			// INT 2
 			rc = AssignInterruptControllerLine(portNumber*2 + 1, int2Mode);
 			if (rc != EBF_OK) {
-				return rc;
+				EBF_REPORT_AND_RETURN(rc);
 			}
 		}
 	} else {
@@ -353,8 +342,7 @@ uint8_t PnP_PlugAndPlayHub::AssignInterruptLines(uint8_t portNumber, uint8_t end
 
 		rc = pParentHub->AssignInterruptLines(parentPortNumber, 0, hubDeviceInfo);
 		if (rc != EBF_OK) {
-			EBF_REPORT_ERROR(rc);
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 
 		// Interrupts are sequential for interrupt controller mapping, 2 interrupts for every port
@@ -366,17 +354,17 @@ uint8_t PnP_PlugAndPlayHub::AssignInterruptLines(uint8_t portNumber, uint8_t end
 		// INT 1
 		rc = AssignInterruptControllerLine(portNumber*2 + 0, int1Mode);
 		if (rc != EBF_OK) {
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 
 		// INT 2
 		rc = AssignInterruptControllerLine(portNumber*2 + 1, int2Mode);
 		if (rc != EBF_OK) {
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 // We can't rely that Arduino's enumeration will not change some day
@@ -415,8 +403,7 @@ uint8_t PnP_PlugAndPlayHub::Process()
 {
 	// HUBs should not get that call.
 	// The Process() is called by the EBF_Logic directly for every registered HAL instance
-	EBF_REPORT_ERROR(EBF_NOT_INITIALIZED);
-	return EBF_NOT_INITIALIZED;
+	EBF_REPORT_AND_RETURN(EBF_NOT_INITIALIZED);
 
 /*
 	uint8_t rc;
@@ -429,15 +416,14 @@ uint8_t PnP_PlugAndPlayHub::Process()
 					rc = pPortInfo[i].pConnectedInstances[j]->Process();
 
 					if (rc != EBF_OK) {
-						EBF_REPORT_ERROR(rc);
-						return rc;
+						EBF_REPORT_AND_RETURN(rc);
 					}
 				}
 			}
 		}
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 */
 }
 
@@ -563,25 +549,23 @@ uint8_t PnP_PlugAndPlayHub::SwitchToPort(EBF_I2C* pPnpI2C, uint8_t portNumber)
 
 	if (i2cSwitchChip.i2cAddress == 0) {
 		// There is no switch for that HUB, just return OK
-		return EBF_OK;
+		EBF_REPORT_AND_RETURN(EBF_OK);
 	} else {
 		if (pParentHub != NULL) {
 			// Switch parent HUBs first (from the main HUB up to this)
 			rc = pParentHub->SwitchToPort(pPnpI2C, parentPortNumber);
 			if (rc != EBF_OK) {
-				EBF_REPORT_ERROR(rc);
-				return rc;
+				EBF_REPORT_AND_RETURN(rc);
 			}
 		}
 
 		rc = i2cSwitchChip.Switch(portNumber);
 		if (rc != EBF_OK) {
-			EBF_REPORT_ERROR(rc);
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 // Setting an interrupt line is possible only for device that declared that line as a Digital Output
@@ -590,18 +574,15 @@ uint8_t PnP_PlugAndPlayHub::SetIntLine(uint8_t portNumber, uint8_t intLineNumber
 	uint8_t rc;
 
 	if (portNumber > maxPorts) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	if (portInterruptMode[portNumber*2 + intLineNumber] != PnP_InterruptMode::PNP_DIGITAL_OUTPUT) {
-		EBF_REPORT_ERROR(EBF_INVALID_STATE);
-		return EBF_INVALID_STATE;
+		EBF_REPORT_AND_RETURN(EBF_INVALID_STATE);
 	}
 
 	if (intLineNumber > 1) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	// This is the main HUB without interrupt controller, the interrupt lines are directly connected to the MCU
@@ -611,8 +592,7 @@ uint8_t PnP_PlugAndPlayHub::SetIntLine(uint8_t portNumber, uint8_t intLineNumber
 		if (interruptMapping[portNumber*2 + intLineNumber] != (uint8_t)(-1)) {
 			digitalWrite(interruptMapping[portNumber*2 + intLineNumber], value & 0x01);
 		} else {
-			EBF_REPORT_ERROR(EBF_NOT_INITIALIZED);
-			return EBF_NOT_INITIALIZED;
+			EBF_REPORT_AND_RETURN(EBF_NOT_INITIALIZED);
 		}
 	} else {
 		// For HUBs with interrupt controller the interrupt numbering is sequential for all the ports
@@ -621,7 +601,7 @@ uint8_t PnP_PlugAndPlayHub::SetIntLine(uint8_t portNumber, uint8_t intLineNumber
 		// Get current value
 		rc = intControllerChip.GetOuput(currentValue);
 		if (rc != EBF_OK) {
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 
 		// Clear the bit for the output line
@@ -635,11 +615,11 @@ uint8_t PnP_PlugAndPlayHub::SetIntLine(uint8_t portNumber, uint8_t intLineNumber
 		// Set the line to the specified value
 		rc = intControllerChip.SetOutput(currentValue);
 		if (rc != EBF_OK) {
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 // Setting both interrupt lines is possible only for device that declared those line as a Digital Outputs
@@ -648,18 +628,15 @@ uint8_t PnP_PlugAndPlayHub::SetIntLinesValue(uint8_t portNumber, uint8_t value)
 	uint8_t rc;
 
 	if (portNumber > maxPorts) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	if (portInterruptMode[portNumber*2 + 0] != PnP_InterruptMode::PNP_DIGITAL_OUTPUT) {
-		EBF_REPORT_ERROR(EBF_INVALID_STATE);
-		return EBF_INVALID_STATE;
+		EBF_REPORT_AND_RETURN(EBF_INVALID_STATE);
 	}
 
 	if (portInterruptMode[portNumber*2 + 1] != PnP_InterruptMode::PNP_DIGITAL_OUTPUT) {
-		EBF_REPORT_ERROR(EBF_INVALID_STATE);
-		return EBF_INVALID_STATE;
+		EBF_REPORT_AND_RETURN(EBF_INVALID_STATE);
 	}
 
 	// This is the main HUB without interrupt controller, the interrupt lines are directly connected to the MCU
@@ -680,7 +657,7 @@ uint8_t PnP_PlugAndPlayHub::SetIntLinesValue(uint8_t portNumber, uint8_t value)
 		// Get current value
 		rc = intControllerChip.GetOuput(currentValue);
 		if (rc != EBF_OK) {
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 
 		// Clear the bits for the output lines
@@ -698,11 +675,11 @@ uint8_t PnP_PlugAndPlayHub::SetIntLinesValue(uint8_t portNumber, uint8_t value)
 		// Set the line to the specified value
 		rc = intControllerChip.SetOutput(currentValue);
 		if (rc != EBF_OK) {
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 // Getting both interrupt lines values
@@ -713,8 +690,7 @@ uint8_t PnP_PlugAndPlayHub::GetIntLinesValue(uint8_t portNumber, uint8_t &value)
 	value = 0;
 
 	if (portNumber > maxPorts) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	// This is the main HUB without interrupt controller, the interrupt lines are directly connected to the MCU
@@ -735,7 +711,7 @@ uint8_t PnP_PlugAndPlayHub::GetIntLinesValue(uint8_t portNumber, uint8_t &value)
 		// Get current value
 		rc = intControllerChip.GetInput(currentValue);
 		if (rc != EBF_OK) {
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 
 		if(currentValue & (1<<(portNumber*2 + 0))) {
@@ -747,7 +723,7 @@ uint8_t PnP_PlugAndPlayHub::GetIntLinesValue(uint8_t portNumber, uint8_t &value)
 		}
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 uint8_t PnP_PlugAndPlayHub::GetIntLine(uint8_t portNumber, uint8_t intLineNumber, uint8_t &value)
@@ -756,13 +732,11 @@ uint8_t PnP_PlugAndPlayHub::GetIntLine(uint8_t portNumber, uint8_t intLineNumber
 	value = 0;
 
 	if (portNumber > maxPorts) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	if (intLineNumber > 1) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	// This is the main HUB without interrupt controller, the interrupt lines are directly connected to the MCU
@@ -772,8 +746,7 @@ uint8_t PnP_PlugAndPlayHub::GetIntLine(uint8_t portNumber, uint8_t intLineNumber
 		if (interruptMapping[portNumber*2 + intLineNumber] != (uint8_t)(-1)) {
 			value |= digitalRead(interruptMapping[portNumber*2 + intLineNumber]);
 		} else {
-			EBF_REPORT_ERROR(EBF_NOT_INITIALIZED);
-			return EBF_NOT_INITIALIZED;
+			EBF_REPORT_AND_RETURN(EBF_NOT_INITIALIZED);
 		}
 	} else {
 		// For HUBs with interrupt controller the interrupt numbering is sequential for all the ports
@@ -782,7 +755,7 @@ uint8_t PnP_PlugAndPlayHub::GetIntLine(uint8_t portNumber, uint8_t intLineNumber
 		// Get current value
 		rc = intControllerChip.GetInput(currentValue);
 		if (rc != EBF_OK) {
-			return rc;
+			EBF_REPORT_AND_RETURN(rc);
 		}
 
 		// PnP is working with reverse logic, "1" logic = GND, "0" logic = HIGH
@@ -791,5 +764,5 @@ uint8_t PnP_PlugAndPlayHub::GetIntLine(uint8_t portNumber, uint8_t intLineNumber
 		}
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }

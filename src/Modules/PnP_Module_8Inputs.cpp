@@ -21,8 +21,7 @@ uint8_t PnP_Module_8Inputs::Init()
 	// Assign the current instance to physical PnP device and get all needed information
 	rc = pPnpManager->AssignDevice(this, deviceInfo, endpointIndex, &pPnPI2C, &pAssignedHub);
 	if(rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	chip.pI2C = pPnPI2C;
@@ -30,8 +29,7 @@ uint8_t PnP_Module_8Inputs::Init()
 	// Initialize the device
 	rc = EBF_Module_8Inputs::Init(deviceInfo.endpointData[endpointIndex].i2cAddress);
 	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	// Fix type and ID after the EBF_Instance init
@@ -43,12 +41,8 @@ uint8_t PnP_Module_8Inputs::Init()
 
 	// Attach interrupt lines for that device
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);
-	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
-	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 void PnP_Module_8Inputs::ExecuteCallback()
@@ -74,8 +68,7 @@ uint8_t PnP_Module_8Inputs::Process()
 
 	rc = EBF_Module_8Inputs::Process();
 	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	// Process call is relevant only to the assigned input interfaces (long-press for example)
@@ -94,19 +87,19 @@ uint8_t PnP_Module_8Inputs::Process()
 		}
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 uint8_t PnP_Module_8Inputs::AssignInterface(uint8_t index, PnP_InputInterface* pIfInstance)
 {
+	uint8_t rc;
+
 	if (index >= numberOfInputs) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	if (isInterfaceAssigned & 1<<index) {
-		EBF_REPORT_ERROR(EBF_INVALID_STATE);
-		return EBF_INVALID_STATE;
+		EBF_REPORT_AND_RETURN(EBF_INVALID_STATE);
 	}
 
 	onChangeCallback[index] = (EBF_CallbackType)pIfInstance;
@@ -114,7 +107,9 @@ uint8_t PnP_Module_8Inputs::AssignInterface(uint8_t index, PnP_InputInterface* p
 
 	pIfInstance->SetInitialValue(GetLastValue(index));
 
-	return pIfInstance->AssignInterfaceProvider(this, index);
+	rc = pIfInstance->AssignInterfaceProvider(this, index);
+
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 // Returns pointer to current interface instance, if it was assigned

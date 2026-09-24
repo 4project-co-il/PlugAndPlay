@@ -20,11 +20,7 @@ uint8_t PnP_SimpleLedInterface::SetValue(uint8_t value)
 		rc = pOutputProvider->SetValue_OIP(providerIndex, 100.0);
 	}
 
-	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-	}
-
-	return rc;
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 // GetValue returns current status of the led (ON or OFF)
@@ -47,16 +43,24 @@ float PnP_SimpleLedInterface::GetValue()
 
 uint8_t PnP_SimpleLedInterface::On()
 {
+	uint8_t rc;
+
 	state = LED_ON;
 
-	return pOutputProvider->SetValue_OIP(providerIndex, 100.0);
+	rc = pOutputProvider->SetValue_OIP(providerIndex, 100.0);
+
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 uint8_t PnP_SimpleLedInterface::Off()
 {
+	uint8_t rc;
+
 	state = LED_OFF;
 
-	return pOutputProvider->SetValue_OIP(providerIndex, 0.0);
+	rc = pOutputProvider->SetValue_OIP(providerIndex, 0.0);
+
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 // Turns on for msOn milliSeconds and stay off for msOff milliSeconds
@@ -75,12 +79,8 @@ uint8_t PnP_SimpleLedInterface::Blink(uint16_t msOn, uint16_t msOff)
 	pOutputProvider->SetPollingInterval_OIP(0);
 
 	rc = On();
-	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
-	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 uint8_t PnP_SimpleLedInterface::IsProcessingNeeded()
@@ -163,10 +163,5 @@ uint8_t PnP_SimpleLedInterface::Process()
 		break;
 	}
 
-	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
-	}
-
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(rc);
 }

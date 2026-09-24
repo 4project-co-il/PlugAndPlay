@@ -21,8 +21,7 @@ uint8_t PnP_Module_8Outputs::Init()
 	// Assign the current instance to physical PnP device and get all needed information
 	rc = pPnpManager->AssignDevice(this, deviceInfo, endpointIndex, &pPnPI2C, &pAssignedHub);
 	if(rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	chip.pI2C = pPnPI2C;
@@ -30,8 +29,7 @@ uint8_t PnP_Module_8Outputs::Init()
 	// Initialize the device
 	rc = EBF_Module_8Outputs::Init(deviceInfo.endpointData[endpointIndex].i2cAddress);
 	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	// Fix type and ID after the EBF_Instance init
@@ -44,12 +42,8 @@ uint8_t PnP_Module_8Outputs::Init()
 	// Attach interrupt lines for that device
 	// Current device don't produce interrupts, but all the initializations are done in AssignInterruptLines
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);
-	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
-	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 uint8_t PnP_Module_8Outputs::Process()
@@ -60,29 +54,27 @@ uint8_t PnP_Module_8Outputs::Process()
 		if (pInterfaces[i] != NULL) {
 			rc = pInterfaces[i]->Process();
 			if (rc != EBF_OK) {
-				return rc;
+				EBF_REPORT_AND_RETURN(rc);
 			}
 		}
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 uint8_t PnP_Module_8Outputs::AssignInterface(uint8_t index, PnP_OutputInterface* pIfInstance)
 {
 	if (index >= numberOfOutputs) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	if (pInterfaces[index] != NULL) {
-		EBF_REPORT_ERROR(EBF_INVALID_STATE);
-		return EBF_INVALID_STATE;
+		EBF_REPORT_AND_RETURN(EBF_INVALID_STATE);
 	}
 
 	pInterfaces[index] = pIfInstance;
 
-	return pIfInstance->AssignInterfaceProvider(this, index);
+	EBF_REPORT_AND_RETURN(pIfInstance->AssignInterfaceProvider(this, index));
 }
 
 uint8_t PnP_Module_8Outputs::SetValue_OIP(uint8_t index, float value)
@@ -90,8 +82,7 @@ uint8_t PnP_Module_8Outputs::SetValue_OIP(uint8_t index, float value)
 	uint8_t rc;
 
 	if (index >= numberOfOutputs) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	if (value < 0.0) value = 0.0;
@@ -99,12 +90,8 @@ uint8_t PnP_Module_8Outputs::SetValue_OIP(uint8_t index, float value)
 
 	// Set PWM will handle 0% and 100% special cases
 	rc = SetPWM(index, value);
-	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
-	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 float PnP_Module_8Outputs::GetValue_OIP(uint8_t index)

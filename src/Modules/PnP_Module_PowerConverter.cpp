@@ -19,8 +19,7 @@ uint8_t PnP_Module_PowerConverter::Init(uint8_t enable)
 	// Assign the current instance to physical PnP device and get all needed information
 	rc = pPnpManager->AssignDevice(this, deviceInfo, endpointIndex, &pPnPI2C, &pAssignedHub);
 	if(rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	// Save the I2C instance, although this device doesn't communicate via I2C, but via the HUBs
@@ -30,8 +29,7 @@ uint8_t PnP_Module_PowerConverter::Init(uint8_t enable)
 	// Initialize the instance
 	rc = EBF_HalInstance::Init(this->type, this->id);
 	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	// Fix type and ID after the EBF_Instance init
@@ -45,8 +43,7 @@ uint8_t PnP_Module_PowerConverter::Init(uint8_t enable)
 	// Current device don't produce interrupts, but all the initializations are done in AssignInterruptLines
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);
 	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	if (enable) {
@@ -55,22 +52,17 @@ uint8_t PnP_Module_PowerConverter::Init(uint8_t enable)
 		rc = Disable();
 	}
 
-	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
-	}
-
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 uint8_t PnP_Module_PowerConverter::Enable()
 {
-	return SetIntLine(0, 1);
+	EBF_REPORT_AND_RETURN(SetIntLine(0, 1));
 }
 
 uint8_t PnP_Module_PowerConverter::Disable()
 {
-	return SetIntLine(0, 0);
+	EBF_REPORT_AND_RETURN(SetIntLine(0, 0));
 }
 
 uint8_t PnP_Module_PowerConverter::IsPowerGood()
@@ -108,17 +100,12 @@ uint8_t PnP_Module_PowerConverter::SetIntLine(uint8_t line, uint8_t value)
 
 	// Line can be only 0 or 1 (the interrupt line number)
 	if (line > 1) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	rc = pHub->SetIntLine(pPnPI2C->GetPortNumber(), line, value & 0x03);
-	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
-	}
 
-	return rc;
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 uint8_t PnP_Module_PowerConverter::GetIntLine(uint8_t line, uint8_t &value)
@@ -127,10 +114,6 @@ uint8_t PnP_Module_PowerConverter::GetIntLine(uint8_t line, uint8_t &value)
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
 
 	rc = pHub->GetIntLine(pPnPI2C->GetPortNumber(), line, value);
-	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
-	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(rc);
 }

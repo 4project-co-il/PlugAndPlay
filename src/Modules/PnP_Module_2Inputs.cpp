@@ -29,8 +29,7 @@ uint8_t PnP_Module_2Inputs::Init()
 	// Assign the current instance to physical PnP device and get all needed information
 	rc = pPnpManager->AssignDevice(this, deviceInfo, endpointIndex, &pPnPI2C, &pAssignedHub);
 	if(rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	// Save the I2C instance, although this device doesn't communicate via I2C, but via the HUBs
@@ -40,8 +39,7 @@ uint8_t PnP_Module_2Inputs::Init()
 	// Initialize the instance
 	rc = EBF_HalInstance::Init(this->type, this->id);
 	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	// PnP is interrupt driven, no polling is needed
@@ -50,19 +48,19 @@ uint8_t PnP_Module_2Inputs::Init()
 	// Attach interrupt lines for that device
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);
 	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	// Read initial input status
 	lastValues = GetValues();
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 // Called by the EBF from normal run to take care of the events
 uint8_t PnP_Module_2Inputs::Process()
 {
+	uint8_t rc;
 	EBF_Logic *pLogic = EBF_Logic::GetInstance();
 	PostponedInterruptData data = {0};
 
@@ -97,12 +95,15 @@ uint8_t PnP_Module_2Inputs::Process()
 
 				PnP_InputInterface* pInput = GetAsInputInterface(currentEventIndex);
 
-				pInput->Process();
+				rc = pInput->Process();
+				if (rc != EBF_OK) {
+					EBF_REPORT_AND_RETURN(rc);
+				}
 			}
 		}
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 // Returns 1 if input is HIGH for a specific interrupt line
@@ -170,11 +171,10 @@ uint8_t PnP_Module_2Inputs::GetIntLine(uint8_t line, uint8_t &value)
 
 	rc = pHub->GetIntLine(pPnPI2C->GetPortNumber(), line, value);
 	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 // Called directly from the ISR
@@ -222,35 +222,33 @@ uint8_t PnP_Module_2Inputs::PostponeProcessing(uint8_t eventIndex, uint8_t input
 	// Pass the control back to EBF, so it will call the Process() function from normal run
 	rc = pLogic->PostponeInterrupt(this, data.uint32);
 	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 uint8_t PnP_Module_2Inputs::SetOnChange(uint8_t index, EBF_CallbackType onChangeCallback)
 {
 	if (index >= numberOfInputs) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	this->onChangeCallback[index] = onChangeCallback;
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 uint8_t PnP_Module_2Inputs::AssignInterface(uint8_t index, PnP_InputInterface* pIfInstance)
 {
+	uint8_t rc;
+
 	if (index >= numberOfInputs) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	if (isInterfaceAssigned & 1<<index) {
-		EBF_REPORT_ERROR(EBF_INVALID_STATE);
-		return EBF_INVALID_STATE;
+		EBF_REPORT_AND_RETURN(EBF_INVALID_STATE);
 	}
 
 	onChangeCallback[index] = (EBF_CallbackType)pIfInstance;
@@ -258,7 +256,9 @@ uint8_t PnP_Module_2Inputs::AssignInterface(uint8_t index, PnP_InputInterface* p
 
 	pIfInstance->SetInitialValue(GetLastValue(index));
 
-	return pIfInstance->AssignInterfaceProvider(this, index);
+	rc = pIfInstance->AssignInterfaceProvider(this, index);
+
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 // This is an override of the default function

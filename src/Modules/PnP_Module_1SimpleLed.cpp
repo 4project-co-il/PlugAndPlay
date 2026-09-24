@@ -21,8 +21,7 @@ uint8_t PnP_Module_1SimpleLed::Init()
 	// Assign the current instance to physical PnP device and get all needed information
 	rc = pPnpManager->AssignDevice(this, deviceInfo, endpointIndex, &pPnPI2C, &pAssignedHub);
 	if(rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	// Save the I2C instance, although this device doesn't communicate via I2C, but via the HUBs
@@ -32,8 +31,7 @@ uint8_t PnP_Module_1SimpleLed::Init()
 	// Initialize the instance
 	rc = EBF_HalInstance::Init(this->type, this->id);
 	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	// Fix type and ID after the EBF_Instance init
@@ -47,38 +45,51 @@ uint8_t PnP_Module_1SimpleLed::Init()
 	// Current device don't produce interrupts, but all the initializations are done in AssignInterruptLines
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);
 	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
 uint8_t PnP_Module_1SimpleLed::Process()
 {
+	uint8_t rc = EBF_OK;
+
 	if (pInterface != NULL) {
-		return pInterface->Process();
+		rc = pInterface->Process();
 	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 // Turns the LED ON.
 uint8_t PnP_Module_1SimpleLed::On()
 {
-	return SetIntLine(0, 1);
+	uint8_t rc;
+
+	rc = SetIntLine(0, 1);
+
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 // Turns the LED OFF.
 uint8_t PnP_Module_1SimpleLed::Off()
 {
-	return SetIntLine(0, 0);
+	uint8_t rc;
+
+	rc = SetIntLine(0, 0);
+
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 // Sets current LED value
 uint8_t PnP_Module_1SimpleLed::SetValue(uint8_t value)
 {
-	return SetIntLine(0, value);
+	uint8_t rc;
+
+	rc = SetIntLine(0, value);
+
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 // Returns 1 if output is HIGH, 0 if LOW
@@ -98,22 +109,17 @@ uint8_t PnP_Module_1SimpleLed::GetValue()
 
 uint8_t PnP_Module_1SimpleLed::SetIntLine(uint8_t line, uint8_t value)
 {
-	uint8_t rc = EBF_OK;
+	uint8_t rc;
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
 
 	// Line can be only 0 or 1 (the interrupt line number)
 	if (line > 1) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	rc = pHub->SetIntLine(pPnPI2C->GetPortNumber(), line, value & 0x03);
-	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
-	}
 
-	return rc;
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 uint8_t PnP_Module_1SimpleLed::GetIntLine(uint8_t line, uint8_t &value)
@@ -122,44 +128,45 @@ uint8_t PnP_Module_1SimpleLed::GetIntLine(uint8_t line, uint8_t &value)
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
 
 	rc = pHub->GetIntLine(pPnPI2C->GetPortNumber(), line, value);
-	if (rc != EBF_OK) {
-		EBF_REPORT_ERROR(rc);
-		return rc;
-	}
 
-	return EBF_OK;
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 uint8_t PnP_Module_1SimpleLed::AssignInterface(PnP_OutputInterface* pIfInstance)
 {
+	uint8_t rc;
+
 	// Only simple LED interface is accepted here
 	if (pIfInstance->GetType() != PnP_OutputInterface::SIMPLE_LED) {
-		EBF_REPORT_ERROR(EBF_INVALID_STATE);
-		return EBF_INVALID_STATE;
+		EBF_REPORT_AND_RETURN(EBF_INVALID_STATE);
 	}
 
 	if (pInterface != NULL) {
-		EBF_REPORT_ERROR(EBF_INVALID_STATE);
-		return EBF_INVALID_STATE;
+		EBF_REPORT_AND_RETURN(EBF_INVALID_STATE);
 	}
 
 	pInterface = pIfInstance;
 
-	return pIfInstance->AssignInterfaceProvider(this, 0);
+	rc = pIfInstance->AssignInterfaceProvider(this, 0);
+
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 uint8_t PnP_Module_1SimpleLed::SetValue_OIP(uint8_t index, float value)
 {
+	uint8_t rc;
+
 	if (index != 0) {
-		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
-		return EBF_INDEX_OUT_OF_BOUNDS;
+		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
 	if (value == 0.0) {
-		return SetValue((uint8_t)0);
+		rc = SetValue((uint8_t)0);
 	} else {
-		return SetValue((uint8_t)1);
+		rc = SetValue((uint8_t)1);
 	}
+
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 float PnP_Module_1SimpleLed::GetValue_OIP(uint8_t index)
