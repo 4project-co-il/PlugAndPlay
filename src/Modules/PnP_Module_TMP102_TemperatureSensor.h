@@ -1,0 +1,27 @@
+#ifndef __PNP_MODULE_TMP102_TEMPERATURESENSOR_H__
+#define __PNP_MODULE_TMP102_TEMPERATURESENSOR_H__
+
+#include <Arduino.h>
+#if __has_include("Project_Config.h")
+	#include "Project_Config.h"
+#endif
+
+#include <Wire.h>
+#include "../../../EventBasedFramework/src/Core/EBF_Global.h"
+#include "../../../EventBasedFramework/src/Core/EBF_HalInstance.h"
+#include "../../../EventBasedFramework/src/Core/EBF_Core.h"
+#include "../../../EventBasedFramework/src/Core/EBF_Logic.h"
+#include "../../../EventBasedFramework/src/Products/EBF_TMP102_TemperatureSensor.h"
+#include "../Core/PnP_PlugAndPlayDevice.h"
+#include "../Core/PnP_PlugAndPlayManager.h"
+#include "../Core/PnP_PlugAndPlayI2C.h"
+
+class PnP_Module_TMP102_TemperatureSensor : public EBF_TMP102_TemperatureSensor {
+	public:
+		PnP_Module_TMP102_TemperatureSensor();
+
+		uint8_t Init();
+
+};
+
+#endif

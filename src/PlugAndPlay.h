@@ -23,6 +23,7 @@
 #include "Core/PnP_SimpleLedInterface.h"
 #include "Core/PnP_DirectPwmInterface.h"
 #include "Modules/PnP_Module_STTS22H_TemperatureSensor.h"
+#include "Modules/PnP_Module_TMP102_TemperatureSensor.h"
 #include "Modules/PnP_Module_1SimpleLed.h"
 #include "Modules/PnP_Module_2SimpleLeds.h"
 #include "Modules/PnP_Module_2Inputs.h"

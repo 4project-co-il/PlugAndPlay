@@ -36,7 +36,7 @@ typedef enum : uint32_t {
 	PNP_ID_EXTENDER_HUB,					// Extender HUB with interrupt controller
 
 	// Devices
-	PNP_ID_STTS22H_TEMPERATURE_SENSOR = 201,
+	PNP_ID_STTS22H_TEMPERATURE_SENSOR = 201,// Module with STTS22H temperature sensor
 	PNP_ID_1_SIMPLE_LED,					// Module with 1 Simple LED connected directly to interrupt #0 line
 	PNP_ID_2_SIMPLE_LEDS,					// Module with 2 Simple LEDs connected directly to both interrupt lines
 	PNP_ID_2INPUTS,							// Module with 2 inputs connected directly to interrupt lines
@@ -47,6 +47,7 @@ typedef enum : uint32_t {
 	PNP_ID_8INPUTS,							// Module with 8 inputs with IO extender chip
 	PNP_ID_8OUTPUTS,						// Module with 8 outputs with PWM controller chip
 	PNP_ID_POWER_CONVERTER_CONTROL,			// Power conversion module, control over the enable line and feedback with "power-good" line
+	PNP_ID_TMP102_TEMPERATURE_SENSOR,		// Module with TMP102 temperature sensor
 } PnP_DeviceId;
 
 // 2 bytes
