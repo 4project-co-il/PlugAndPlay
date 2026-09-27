@@ -485,6 +485,24 @@ void PnP_PlugAndPlayHub::ProcessInterrupt()
 						}
 						break;
 
+					case PNP_INTERRUPT_FALLING:
+						// Should process while currect value is low and changed
+						if ((currentInputs & 1<<i) == 0 && (changedLines & 1<<i) != 0) {
+							CallHalInterruptProcessing(i);
+
+							stillProcessing = true;
+						}
+						break;
+
+					case PNP_INTERRUPT_RISING:
+						// Should process while currect value is high and changed
+						if ((currentInputs & 1<<i) != 0 && (changedLines & 1<<i) != 0) {
+							CallHalInterruptProcessing(i);
+
+							stillProcessing = true;
+						}
+						break;
+
 					default:
 						// In general should not happen, but sometimes a second interrupt line
 						// that is not connected changes due to cross-talk since the line is in the air
