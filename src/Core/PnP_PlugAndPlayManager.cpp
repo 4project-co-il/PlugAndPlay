@@ -379,7 +379,8 @@ uint8_t PnP_PlugAndPlayManager::AssignDevice(
 		EBF_REPORT_ERROR(EBF_NOT_INITIALIZED);
 	}
 
-	EBF_REPORT_AND_RETURN(EBF_NOT_INITIALIZED);
+	// Return without reporting. The device might not be found on an extender.
+	return EBF_NOT_INITIALIZED;
 }
 
 uint8_t PnP_PlugAndPlayManager::WriteDeviceEEPROM(uint8_t i2cAddress, PnP_DeviceInfo &deviceInfo, uint8_t* pParams, uint8_t paramsSize)
