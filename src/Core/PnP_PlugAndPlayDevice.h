@@ -48,6 +48,7 @@ typedef enum : uint32_t {
 	PNP_ID_8OUTPUTS,						// Module with 8 outputs with PWM controller chip
 	PNP_ID_POWER_CONVERTER_CONTROL,			// Power conversion module, control over the enable line and feedback with "power-good" line
 	PNP_ID_TMP102_TEMPERATURE_SENSOR,		// Module with TMP102 temperature sensor
+	PNP_ID_1_RGB_LED_LP5815,				// Module with 1 RGB LED with LP5815 driver
 } PnP_DeviceId;
 
 // 2 bytes
