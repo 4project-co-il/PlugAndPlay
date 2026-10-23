@@ -17,6 +17,9 @@
 #include "../Core/PnP_PlugAndPlayI2C.h"
 
 class PnP_Module_STTS22H_TemperatureSensor : public EBF_STTS22H_TemperatureSensor {
+	private:
+		EBF_DEBUG_MODULE_NAME("PnP_Module_STTS22H_TemperatureSensor");
+
 	public:
 		PnP_Module_STTS22H_TemperatureSensor();
 

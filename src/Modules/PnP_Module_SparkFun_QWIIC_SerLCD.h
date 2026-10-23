@@ -17,6 +17,9 @@
 #include "../Core/PnP_PlugAndPlayI2C.h"
 
 class PnP_Module_SparkFun_QWIIC_SerLCD : public EBF_SparkFun_QWIIC_SerLCD {
+	private:
+		EBF_DEBUG_MODULE_NAME("PnP_Module_SparkFun_QWIIC_SerLCD");
+
 	public:
 		PnP_Module_SparkFun_QWIIC_SerLCD();
 

@@ -17,6 +17,9 @@
 #include "../Core/PnP_PlugAndPlayI2C.h"
 
 class PnP_Module_Seeed_Monochrome_GROVE_16x2_LCD : public EBF_Seeed_Monochrome_GROVE_16x2_LCD {
+	private:
+		EBF_DEBUG_MODULE_NAME("PnP_Module_Seeed_Monochrome_GROVE_16x2_LCD");
+
 	public:
 		PnP_Module_Seeed_Monochrome_GROVE_16x2_LCD();
 

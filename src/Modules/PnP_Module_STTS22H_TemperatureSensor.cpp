@@ -19,7 +19,7 @@ uint8_t PnP_Module_STTS22H_TemperatureSensor::Init()
 	// Assign the current instance to physical PnP device and get all needed information
 	rc = pPnpManager->AssignDevice(this, deviceInfo, endpointIndex, &pPnPI2C, &pAssignedHub);
 	if(rc != EBF_OK) {
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	chip.pI2C = pPnPI2C;
@@ -27,7 +27,7 @@ uint8_t PnP_Module_STTS22H_TemperatureSensor::Init()
 	// Initialize the device
 	rc = EBF_STTS22H_TemperatureSensor::Init(deviceInfo.endpointData[endpointIndex].i2cAddress);
 	if (rc != EBF_OK) {
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	// Fix type and ID after the EBF_Instance init
@@ -40,8 +40,8 @@ uint8_t PnP_Module_STTS22H_TemperatureSensor::Init()
 	// Attach interrupt lines for that device
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);
 	if (rc != EBF_OK) {
-		return rc;
+		EBF_REPORT_AND_RETURN(rc);
 	}
 
-	return rc;
+	EBF_REPORT_AND_RETURN(rc);
 }
