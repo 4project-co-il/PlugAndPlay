@@ -45,8 +45,8 @@ class PnP_PlugAndPlayManager {
 	private:
 		PnP_PlugAndPlayHub* pMainHub;
 		uint8_t IsHeaderValid(PnP_DeviceInfo &deviceInfo);
-		uint8_t GetDeviceInfo(EBF_I2C* pPnpI2C, PnP_DeviceInfo &deviceInfo, uint8_t routingLevel = 0);
-		uint8_t GetDeviceParameters(EBF_I2C* pPnpI2C, uint8_t routingLevel, uint8_t *pParams, uint8_t maxSize);
+		uint8_t GetDeviceInfo(EBF_I2C* pI2C, PnP_DeviceInfo &deviceInfo, uint8_t routingLevel = 0);
+		uint8_t GetDeviceParameters(EBF_I2C* pI2C, uint8_t routingLevel, uint8_t *pParams, uint8_t maxSize);
 
 		uint8_t InitHubs(PnP_PlugAndPlayHub *pHub);
 

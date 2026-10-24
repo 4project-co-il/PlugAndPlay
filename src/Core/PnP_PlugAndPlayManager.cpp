@@ -220,25 +220,25 @@ uint8_t PnP_PlugAndPlayManager::IsHeaderValid(PnP_DeviceInfo &deviceInfo)
 	}
 }
 
-uint8_t PnP_PlugAndPlayManager::GetDeviceInfo(EBF_I2C* pPnpI2C, PnP_DeviceInfo &deviceInfo, uint8_t routingLevel)
+uint8_t PnP_PlugAndPlayManager::GetDeviceInfo(EBF_I2C* pI2C, PnP_DeviceInfo &deviceInfo, uint8_t routingLevel)
 {
 	uint8_t rc;
 
-	// This function won't report the errorshere since the HUBs are using that method to detect the connected devices.
+	// This function won't report the errors here since the HUBs are using that method to detect the connected devices.
 	// The HUB will report the error if it expects the device to respond, but it didn't
 
 	// Read the device info
-	pPnpI2C->beginTransmission(eepromI2cAddress + routingLevel);
+	pI2C->beginTransmission(eepromI2cAddress + routingLevel);
 	// Device info resides at the beginning of the EEPROM
-	pPnpI2C->write(0);
-	rc = pPnpI2C->endTransmission(false);
+	pI2C->write(0);
+	rc = pI2C->endTransmission(false);
 	if (rc != 0) {
 		return EBF_COMMUNICATION_PROBLEM;
 	}
 
-	pPnpI2C->requestFrom(eepromI2cAddress + routingLevel, sizeof(PnP_DeviceInfo));
+	pI2C->requestFrom(eepromI2cAddress + routingLevel, sizeof(PnP_DeviceInfo));
 
-	rc = pPnpI2C->readBytes((uint8_t*)&deviceInfo, sizeof(PnP_DeviceInfo));
+	rc = pI2C->readBytes((uint8_t*)&deviceInfo, sizeof(PnP_DeviceInfo));
 	// Strange, shuuld not happen with PnP device, skip it
 	if (rc != sizeof(PnP_DeviceInfo)) {
 		return EBF_COMMUNICATION_PROBLEM;
@@ -252,7 +252,7 @@ uint8_t PnP_PlugAndPlayManager::GetDeviceInfo(EBF_I2C* pPnpI2C, PnP_DeviceInfo &
 	return EBF_OK;
 }
 
-uint8_t PnP_PlugAndPlayManager::GetDeviceParameters(EBF_I2C* pPnpI2C, uint8_t routingLevel, uint8_t *pParams, uint8_t maxSize)
+uint8_t PnP_PlugAndPlayManager::GetDeviceParameters(EBF_I2C* pI2C, uint8_t routingLevel, uint8_t *pParams, uint8_t maxSize)
 {
 	uint8_t rc;
 
@@ -262,17 +262,17 @@ uint8_t PnP_PlugAndPlayManager::GetDeviceParameters(EBF_I2C* pPnpI2C, uint8_t ro
 	}
 
 	// Read the device parameters
-	pPnpI2C->beginTransmission(eepromI2cAddress + routingLevel);
+	pI2C->beginTransmission(eepromI2cAddress + routingLevel);
 	// Parameters are right after the device info structure
-	pPnpI2C->write(sizeof(PnP_DeviceInfo));
-	rc = pPnpI2C->endTransmission(false);
+	pI2C->write(sizeof(PnP_DeviceInfo));
+	rc = pI2C->endTransmission(false);
 	if (rc != 0) {
 		EBF_REPORT_AND_RETURN(EBF_COMMUNICATION_PROBLEM);
 	}
 
-	pPnpI2C->requestFrom(eepromI2cAddress + routingLevel, maxSize);
+	pI2C->requestFrom(eepromI2cAddress + routingLevel, maxSize);
 
-	rc = pPnpI2C->readBytes(pParams, maxSize);
+	rc = pI2C->readBytes(pParams, maxSize);
 	// Strange, should not happen with PnP device, skip it
 	if (rc != maxSize) {
 		EBF_REPORT_AND_RETURN(EBF_COMMUNICATION_PROBLEM);

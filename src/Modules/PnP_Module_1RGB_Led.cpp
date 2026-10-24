@@ -13,6 +13,7 @@ uint8_t PnP_Module_1RGB_Led::Init()
 	uint8_t endpointIndex;
 	PnP_PlugAndPlayI2C *pPnPI2C;
 	PnP_PlugAndPlayHub *pAssignedHub;
+	uint16_t pointCurrent[3];
 
 	PnP_PlugAndPlayManager *pPnpManager = PnP_PlugAndPlayManager::GetInstance();
 
@@ -26,8 +27,19 @@ uint8_t PnP_Module_1RGB_Led::Init()
 
 	chip.pI2C = pPnPI2C;
 
+	// Get device parameters from the PnP module EEPROM, that contain the point current settings for the LP5815 LED driver
+	rc = GetDeviceParameters((EBF_I2C*)pPnPI2C, 0, (uint8_t*)pointCurrent, sizeof(pointCurrent));
+	if (rc != EBF_OK) {
+		EBF_REPORT_AND_RETURN(rc);
+	}
+
 	// Initialize the device
-	rc = EBF_Module_1RGB_Led::Init(deviceInfo.endpointData[endpointIndex].i2cAddress);
+	rc = EBF_Module_1RGB_Led::Init(
+		deviceInfo.endpointData[endpointIndex].i2cAddress,
+		pointCurrent[0] / 10.0,		// RED color point max current from EEPROM
+		pointCurrent[1] / 10.0,		// GREEN color point max current from EEPROM
+		pointCurrent[2] / 10.0		// BLUE color point max current from EEPROM
+	);
 	if (rc != EBF_OK) {
 		EBF_REPORT_AND_RETURN(rc);
 	}
@@ -76,6 +88,7 @@ uint8_t PnP_Module_1RGB_Led::PowerDown()
 uint8_t PnP_Module_1RGB_Led::PowerUp()
 {
 	uint8_t rc;
+	uint16_t pointCurrent[3];
 
 	// Raise the INT1 line to wake up the chip
 	rc = SetIntLine((PnP_PlugAndPlayI2C*)chip.pI2C, 0, 1);
@@ -83,10 +96,22 @@ uint8_t PnP_Module_1RGB_Led::PowerUp()
 		EBF_REPORT_AND_RETURN(rc);
 	}
 
-	// TODO: read the device parameters to get LED current limits
+	// Get device parameters from the PnP module EEPROM, that contain the point current settings for the LP5815 LED driver
+	rc = GetDeviceParameters(chip.pI2C, 0, (uint8_t*)pointCurrent, sizeof(pointCurrent));
+	if (rc != EBF_OK) {
+		EBF_REPORT_AND_RETURN(rc);
+	}
 
-	// Init the chip
-	//chip.Init(chip.defaultI2CAddress, 0, ..)
+	// Initialize the chip
+	rc = chip.Init(
+		chip.defaultI2CAddress,
+		pointCurrent[0] / 10.0,		// RED color point max current from EEPROM
+		pointCurrent[1] / 10.0,		// GREEN color point max current from EEPROM
+		pointCurrent[2] / 10.0		// BLUE color point max current from EEPROM
+	);
+	if (rc != EBF_OK) {
+		EBF_REPORT_AND_RETURN(rc);
+	}
 
 	EBF_REPORT_AND_RETURN(rc);
 }

@@ -16,8 +16,9 @@
 #include "../Core/PnP_PlugAndPlayManager.h"
 #include "../Core/PnP_PlugAndPlayI2C.h"
 #include "../Core/PnP_IntLineInterface.h"
+#include "../Core/PnP_DeviceInfoInterface.h"
 
-class PnP_Module_1RGB_Led : public EBF_Module_1RGB_Led, protected PnP_IntLineInterface {
+class PnP_Module_1RGB_Led : public EBF_Module_1RGB_Led, protected PnP_IntLineInterface, protected PnP_DeviceInfoInterface {
 	private:
 		EBF_DEBUG_MODULE_NAME("PnP_Module_1RGB_Led");
 
