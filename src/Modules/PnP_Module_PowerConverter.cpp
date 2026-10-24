@@ -57,12 +57,12 @@ uint8_t PnP_Module_PowerConverter::Init(uint8_t enable)
 
 uint8_t PnP_Module_PowerConverter::Enable()
 {
-	EBF_REPORT_AND_RETURN(SetIntLine(0, 1));
+	EBF_REPORT_AND_RETURN(SetIntLine(pPnPI2C, 0, 1));
 }
 
 uint8_t PnP_Module_PowerConverter::Disable()
 {
-	EBF_REPORT_AND_RETURN(SetIntLine(0, 0));
+	EBF_REPORT_AND_RETURN(SetIntLine(pPnPI2C, 0, 0));
 }
 
 uint8_t PnP_Module_PowerConverter::IsPowerGood()
@@ -70,7 +70,7 @@ uint8_t PnP_Module_PowerConverter::IsPowerGood()
 	uint8_t rc;
 	uint8_t value;
 
-	rc = GetIntLine(1, value);
+	rc = GetIntLine(pPnPI2C, 1, value);
 	if (rc != EBF_OK) {
 		EBF_REPORT_ERROR(rc);
 		return 0;
@@ -84,36 +84,11 @@ uint8_t PnP_Module_PowerConverter::IsEnabled()
 	uint8_t rc;
 	uint8_t value;
 
-	rc = GetIntLine(0, value);
+	rc = GetIntLine(pPnPI2C, 0, value);
 	if (rc != EBF_OK) {
 		EBF_REPORT_ERROR(rc);
 		return 0;
 	}
 
 	return value;
-}
-
-uint8_t PnP_Module_PowerConverter::SetIntLine(uint8_t line, uint8_t value)
-{
-	uint8_t rc = EBF_OK;
-	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
-
-	// Line can be only 0 or 1 (the interrupt line number)
-	if (line > 1) {
-		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
-	}
-
-	rc = pHub->SetIntLine(pPnPI2C->GetPortNumber(), line, value & 0x03);
-
-	EBF_REPORT_AND_RETURN(rc);
-}
-
-uint8_t PnP_Module_PowerConverter::GetIntLine(uint8_t line, uint8_t &value)
-{
-	uint8_t rc;
-	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
-
-	rc = pHub->GetIntLine(pPnPI2C->GetPortNumber(), line, value);
-
-	EBF_REPORT_AND_RETURN(rc);
 }

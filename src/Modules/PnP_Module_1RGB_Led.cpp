@@ -46,7 +46,7 @@ uint8_t PnP_Module_1RGB_Led::Init()
 	}
 
 	// Set the INT1 line to "1" logic to prevent driver's shutdown
-	rc = SetIntLine(0, 1);
+	rc = SetIntLine(pPnPI2C, 0, 1);
 	if (rc != EBF_OK) {
 		EBF_REPORT_AND_RETURN(rc);
 	}
@@ -65,7 +65,7 @@ uint8_t PnP_Module_1RGB_Led::PowerDown()
 	}
 
 	// And lower the INT1 line
-	rc = SetIntLine(0, 0);
+	rc = SetIntLine((PnP_PlugAndPlayI2C*)chip.pI2C, 0, 0);
 	if (rc != EBF_OK) {
 		EBF_REPORT_AND_RETURN(rc);
 	}
@@ -78,7 +78,7 @@ uint8_t PnP_Module_1RGB_Led::PowerUp()
 	uint8_t rc;
 
 	// Raise the INT1 line to wake up the chip
-	rc = SetIntLine(0, 1);
+	rc = SetIntLine((PnP_PlugAndPlayI2C*)chip.pI2C, 0, 1);
 	if (rc != EBF_OK) {
 		EBF_REPORT_AND_RETURN(rc);
 	}
@@ -87,21 +87,6 @@ uint8_t PnP_Module_1RGB_Led::PowerUp()
 
 	// Init the chip
 	//chip.Init(chip.defaultI2CAddress, 0, ..)
-
-	EBF_REPORT_AND_RETURN(rc);
-}
-
-uint8_t PnP_Module_1RGB_Led::SetIntLine(uint8_t line, uint8_t value)
-{
-	uint8_t rc;
-	PnP_PlugAndPlayHub *pHub = ((PnP_PlugAndPlayI2C*)chip.pI2C)->GetHub();
-
-	// Line can be only 0 or 1 (the interrupt line number)
-	if (line > 1) {
-		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
-	}
-
-	rc = pHub->SetIntLine(((PnP_PlugAndPlayI2C*)chip.pI2C)->GetPortNumber(), line, value & 0x03);
 
 	EBF_REPORT_AND_RETURN(rc);
 }

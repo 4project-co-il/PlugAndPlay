@@ -67,7 +67,7 @@ uint8_t PnP_Module_1SimpleLed::On()
 {
 	uint8_t rc;
 
-	rc = SetIntLine(0, 1);
+	rc = SetIntLine(pPnPI2C, 0, 1);
 
 	EBF_REPORT_AND_RETURN(rc);
 }
@@ -77,7 +77,7 @@ uint8_t PnP_Module_1SimpleLed::Off()
 {
 	uint8_t rc;
 
-	rc = SetIntLine(0, 0);
+	rc = SetIntLine(pPnPI2C, 0, 0);
 
 	EBF_REPORT_AND_RETURN(rc);
 }
@@ -87,7 +87,7 @@ uint8_t PnP_Module_1SimpleLed::SetValue(uint8_t value)
 {
 	uint8_t rc;
 
-	rc = SetIntLine(0, value);
+	rc = SetIntLine(pPnPI2C, 0, value);
 
 	EBF_REPORT_AND_RETURN(rc);
 }
@@ -98,38 +98,13 @@ uint8_t PnP_Module_1SimpleLed::GetValue()
 	uint8_t rc;
 	uint8_t value;
 
-	rc = GetIntLine(0, value);
+	rc = GetIntLine(pPnPI2C, 0, value);
 	if (rc != EBF_OK) {
 		EBF_REPORT_ERROR(rc);
 		return 0;
 	}
 
 	return value;
-}
-
-uint8_t PnP_Module_1SimpleLed::SetIntLine(uint8_t line, uint8_t value)
-{
-	uint8_t rc;
-	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
-
-	// Line can be only 0 or 1 (the interrupt line number)
-	if (line > 1) {
-		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
-	}
-
-	rc = pHub->SetIntLine(pPnPI2C->GetPortNumber(), line, value & 0x03);
-
-	EBF_REPORT_AND_RETURN(rc);
-}
-
-uint8_t PnP_Module_1SimpleLed::GetIntLine(uint8_t line, uint8_t &value)
-{
-	uint8_t rc;
-	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
-
-	rc = pHub->GetIntLine(pPnPI2C->GetPortNumber(), line, value);
-
-	EBF_REPORT_AND_RETURN(rc);
 }
 
 uint8_t PnP_Module_1SimpleLed::AssignInterface(PnP_OutputInterface* pIfInstance)

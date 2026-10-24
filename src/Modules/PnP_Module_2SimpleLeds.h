@@ -14,8 +14,9 @@
 #include "../Core/PnP_PlugAndPlayI2C.h"
 #include "../Core/PnP_OutputInterface.h"
 #include "../Core/PnP_OutputInterfaceProvider.h"
+#include "../Core/PnP_IntLineInterface.h"
 
-class PnP_Module_2SimpleLeds : protected EBF_HalInstance, public PnP_OutputInterfaceProvider {
+class PnP_Module_2SimpleLeds : protected EBF_HalInstance, public PnP_OutputInterfaceProvider, protected PnP_IntLineInterface {
 	private:
 		EBF_DEBUG_MODULE_NAME("PnP_Module_2SimpleLeds");
 
@@ -45,9 +46,6 @@ class PnP_Module_2SimpleLeds : protected EBF_HalInstance, public PnP_OutputInter
 	private:
 		void SetPollingInterval(uint32_t ms);
 		uint8_t Process();
-
-		uint8_t SetIntLine(uint8_t line, uint8_t value);
-	 	uint8_t GetIntLine(uint8_t line, uint8_t &value);
 
 	private:
 		// Output interface

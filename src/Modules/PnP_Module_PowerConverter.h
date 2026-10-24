@@ -12,8 +12,9 @@
 #include "../../../EventBasedFramework/src/Core/EBF_Logic.h"
 #include "../Core/PnP_PlugAndPlayDevice.h"
 #include "../Core/PnP_PlugAndPlayI2C.h"
+#include "../Core/PnP_IntLineInterface.h"
 
-class PnP_Module_PowerConverter : protected EBF_HalInstance {
+class PnP_Module_PowerConverter : protected EBF_HalInstance, protected PnP_IntLineInterface {
 	private:
 		EBF_DEBUG_MODULE_NAME("PnP_Module_PowerConverter");
 
@@ -33,9 +34,6 @@ class PnP_Module_PowerConverter : protected EBF_HalInstance {
 
 	private:
 		uint8_t Process() { return EBF_OK; }
-
-	 	uint8_t SetIntLine(uint8_t line, uint8_t value);
-	 	uint8_t GetIntLine(uint8_t line, uint8_t &value);
 
 	private:
 		PnP_PlugAndPlayI2C *pPnPI2C;

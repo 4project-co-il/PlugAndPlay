@@ -15,8 +15,9 @@
 #include "../Core/PnP_PlugAndPlayDevice.h"
 #include "../Core/PnP_PlugAndPlayManager.h"
 #include "../Core/PnP_PlugAndPlayI2C.h"
+#include "../Core/PnP_IntLineInterface.h"
 
-class PnP_Module_1RGB_Led : public EBF_Module_1RGB_Led {
+class PnP_Module_1RGB_Led : public EBF_Module_1RGB_Led, protected PnP_IntLineInterface {
 	private:
 		EBF_DEBUG_MODULE_NAME("PnP_Module_1RGB_Led");
 
@@ -27,9 +28,6 @@ class PnP_Module_1RGB_Led : public EBF_Module_1RGB_Led {
 
 		uint8_t PowerDown();
 		uint8_t PowerUp();
-
-	private:
-		uint8_t SetIntLine(uint8_t line, uint8_t value);
 };
 
 #endif
