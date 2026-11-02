@@ -57,12 +57,20 @@ uint8_t PnP_Module_PowerConverter::Init(uint8_t enable)
 
 uint8_t PnP_Module_PowerConverter::Enable()
 {
-	EBF_REPORT_AND_RETURN(SetIntLine(pPnPI2C, 0, 1));
+	uint8_t rc;
+
+	rc = SetIntLine(pPnPI2C, 0, 1);
+
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 uint8_t PnP_Module_PowerConverter::Disable()
 {
-	EBF_REPORT_AND_RETURN(SetIntLine(pPnPI2C, 0, 0));
+	uint8_t rc;
+
+	rc = SetIntLine(pPnPI2C, 0, 0);
+
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 uint8_t PnP_Module_PowerConverter::IsPowerGood()

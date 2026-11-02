@@ -64,6 +64,8 @@ uint8_t PnP_Module_8Outputs::Process()
 
 uint8_t PnP_Module_8Outputs::AssignInterface(uint8_t index, PnP_OutputInterface* pIfInstance)
 {
+	uint8_t rc;
+
 	if (index >= numberOfOutputs) {
 		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
@@ -74,7 +76,9 @@ uint8_t PnP_Module_8Outputs::AssignInterface(uint8_t index, PnP_OutputInterface*
 
 	pInterfaces[index] = pIfInstance;
 
-	EBF_REPORT_AND_RETURN(pIfInstance->AssignInterfaceProvider(this, index));
+	rc = pIfInstance->AssignInterfaceProvider(this, index);
+
+	EBF_REPORT_AND_RETURN(rc);
 }
 
 uint8_t PnP_Module_8Outputs::SetValue_OIP(uint8_t index, float value)
