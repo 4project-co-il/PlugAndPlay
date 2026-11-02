@@ -1,7 +1,5 @@
 #include "PnP_OutputInterface.h"
 
-PnP_OutputInterfaceProvider* PnP_OutputInterface::pCurrentProvider = NULL;
-
 PnP_OutputInterface::PnP_OutputInterface()
 {
 	this->pOutputProvider = NULL;

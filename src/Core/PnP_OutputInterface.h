@@ -44,9 +44,6 @@ class PnP_OutputInterface {
 		virtual uint8_t IsProcessingNeeded() { return 0; }
 		virtual uint8_t Process() { return EBF_OK; };
 		virtual uint8_t SetInitialValue(uint8_t value) { return EBF_OK; }
-
-		// Current output provider that generates the callbacks
-		static PnP_OutputInterfaceProvider* pCurrentProvider;
 };
 
 #endif
