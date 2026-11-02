@@ -42,6 +42,15 @@ uint8_t PnP_Module_8Outputs::Init()
 	// Attach interrupt lines for that device
 	// Current device don't produce interrupts, but all the initializations are done in AssignInterruptLines
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);
+	if (rc != EBF_OK) {
+		return rc;
+	}
+
+	// Enable chip's output
+	rc = Enable();
+	if (rc != EBF_OK) {
+		return rc;
+	}
 
 	EBF_REPORT_AND_RETURN(rc);
 }
@@ -119,7 +128,7 @@ void PnP_Module_8Outputs::SetPollingInterval(uint32_t ms)
 			PnP_OutputInterface* pOutput = pInterfaces[i];
 
 			// The instance still need processing
-			if (pOutput->IsProcessingNeeded()) {
+			if (pOutput != NULL && pOutput->IsProcessingNeeded()) {
 				return;
 			}
 		}
@@ -130,3 +139,29 @@ void PnP_Module_8Outputs::SetPollingInterval(uint32_t ms)
 		EBF_HalInstance::SetPollingInterval(ms);
 	}
 }
+
+uint8_t PnP_Module_8Outputs::Enable()
+{
+	return SetIntLine((PnP_PlugAndPlayI2C*)chip.pI2C, 0, 0);
+}
+
+uint8_t PnP_Module_8Outputs::Disable()
+{
+	return SetIntLine((PnP_PlugAndPlayI2C*)chip.pI2C, 0, 1);
+}
+
+uint8_t PnP_Module_8Outputs::IsEnabled()
+{
+	uint8_t rc;
+	uint8_t value;
+
+	rc = GetIntLine((PnP_PlugAndPlayI2C*)chip.pI2C, 0, value);
+	if (rc != EBF_OK) {
+		EBF_REPORT_ERROR(rc);
+		return 0;
+	}
+
+	// Active low. "0" is enabled
+	return !value;
+}
+

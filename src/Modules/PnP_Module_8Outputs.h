@@ -18,7 +18,7 @@
 #include "../Core/PnP_OutputInterface.h"
 #include "../Core/PnP_OutputInterfaceProvider.h"
 
-class PnP_Module_8Outputs : public EBF_Module_8Outputs, public PnP_OutputInterfaceProvider {
+class PnP_Module_8Outputs : public EBF_Module_8Outputs, public PnP_OutputInterfaceProvider, protected PnP_IntLineInterface {
 	private:
 		EBF_DEBUG_MODULE_NAME("PnP_Module_8Outputs");
 
@@ -28,6 +28,13 @@ class PnP_Module_8Outputs : public EBF_Module_8Outputs, public PnP_OutputInterfa
 		static const uint8_t numberOfOutputs = 8;
 
 		uint8_t Init();
+
+		// Enable the outputs
+		uint8_t Enable();
+		// Disable the outputs
+		uint8_t Disable();
+		// Returns 1 when the outputs are enabled
+		uint8_t IsEnabled();
 
 		// Assign interface instance to specified output index
 		uint8_t AssignInterface(uint8_t index, PnP_OutputInterface* pIfInstance);
@@ -46,9 +53,6 @@ class PnP_Module_8Outputs : public EBF_Module_8Outputs, public PnP_OutputInterfa
 		unsigned long micros_OIP() { return this->micros(); }
 		void SetPollingInterval_OIP(uint32_t ms) { this->SetPollingInterval(ms); }
 		uint32_t GetPollingInterval_OIP() { return this->GetPollingInterval(); }
-
-			// Interface assigned flag
-		uint8_t isInterfaceAssigned;
 
 	protected:
 		// Override ExecuteCallback and Process to add assigned interfaces processing logic
