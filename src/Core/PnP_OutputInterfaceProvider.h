@@ -20,6 +20,7 @@ class PnP_OutputInterfaceProvider {
 		friend class PnP_SimpleLedInterface;
 		friend class PnP_DirectPwmInterface;
 		friend class PnP_ServoMotorInterface;
+		friend class PnP_RelayInterface;
 
 		// Assign interface instance to output provider
 		virtual uint8_t AssignInterface(uint8_t index, PnP_OutputInterface* pIfInstance) = 0;
