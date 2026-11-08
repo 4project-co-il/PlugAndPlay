@@ -20,7 +20,7 @@
 #include "Core/PnP_BasicInputInterface.h"
 #include "Core/PnP_SwitchInterface.h"
 #include "Core/PnP_ButtonInterface.h"
-#include "Core/PnP_SimpleLedInterface.h"
+#include "Core/PnP_LedInterface.h"
 #include "Core/PnP_RelayInterface.h"
 #include "Core/PnP_DirectPwmInterface.h"
 #include "Core/PnP_ServoMotorInterface.h"

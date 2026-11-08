@@ -25,8 +25,7 @@ class PnP_OutputInterface {
 
 		enum OutputInterface_Type : uint8_t {
 			DIRECT_PWM = 0,		// Direct PWM control
-			SIMPLE_LED,			// Simple led can only be turned ON or OFF
-			ADVANCED_LED,		// Advanced led have brightness control
+			LED,				// Led can be turned ON or OFF, Blinked and Faded (when module supports that)
 			RELAY,				// Relay can be turned ON or OFF
 			SERVO_MOTOR,		// Servo motor with min and max positioning and scaling
 		};
