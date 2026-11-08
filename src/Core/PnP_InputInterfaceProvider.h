@@ -17,9 +17,6 @@ class PnP_InputInterface;
 class PnP_InputInterfaceProvider {
 	public:
 		friend class PnP_InputInterface;
-		friend class PnP_BasicInputInterface;
-		friend class PnP_ButtonInterface;
-		friend class PnP_SwitchInterface;
 
 		// Assign interface instance to input provider
 		virtual uint8_t AssignInterface(uint8_t index, PnP_InputInterface* pIfInstance) = 0;

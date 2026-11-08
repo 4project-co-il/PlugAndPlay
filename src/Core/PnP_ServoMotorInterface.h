@@ -36,7 +36,6 @@ class PnP_ServoMotorInterface : public PnP_OutputInterface {
 		uint8_t SetScaleBoundaries(float minMs = 0.5, float maxMs = 2.5);
 
 	protected:
-		uint8_t IsProcessingNeeded() { return 0; }
 		uint8_t Process();
 		uint8_t AssignInterfaceProvider(PnP_OutputInterfaceProvider* pProvider, uint8_t index);
 

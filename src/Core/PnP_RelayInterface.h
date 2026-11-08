@@ -28,7 +28,6 @@ class PnP_RelayInterface : public PnP_OutputInterface {
 		uint8_t SetValue(float value) { return this->SetValue((uint8_t)value); }	// PnP_OutputInterface override
 
 	protected:
-		uint8_t IsProcessingNeeded() { return 0; }
 		uint8_t Process() { return EBF_OK; }
 };
 

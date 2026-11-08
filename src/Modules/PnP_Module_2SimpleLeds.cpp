@@ -195,22 +195,19 @@ float PnP_Module_2SimpleLeds::GetValue_OIP(uint8_t index)
 // This is an override of the default function
 void PnP_Module_2SimpleLeds::SetPollingInterval(uint32_t ms)
 {
-	// Since we have multiple interfaces that might need the polling at the same time
-	// we can't just change the value to NO_POLLING.
-	// Need to check if there is an interface instance that might still need a lower value
-	if (ms == EBF_NO_POLLING) {
-		for (uint8_t i=0; i<numberOfOutputs; i++) {
-			PnP_OutputInterface* pOutput = pInterfaces[i];
+	uint32_t interval = EBF_NO_POLLING;
 
-			// The instance still need processing
-			if (pOutput->IsProcessingNeeded()) {
-				return;
-			}
+	// Since we have multiple interfaces that might need different polling intrevals,
+	// we'll look for the lowest value and ignore the passed value
+	for (uint8_t i=0; i<numberOfOutputs; i++) {
+		PnP_OutputInterface* pOutput = pInterfaces[i];
+
+		// The instance still need processing
+		if (pOutput != NULL && pOutput->GetPollingInterval() < interval) {
+			interval = pOutput->GetPollingInterval();
 		}
 	}
 
-	// Update the polling interval if requested time is lower than current or NO_POLLING is needed
-	if (EBF_HalInstance::GetPollingInterval() > ms || ms == EBF_NO_POLLING) {
-		EBF_HalInstance::SetPollingInterval(ms);
-	}
+	// Update the polling interval to the lowest found value
+	EBF_HalInstance::SetPollingInterval(interval);
 }

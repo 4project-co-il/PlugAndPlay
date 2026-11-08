@@ -36,14 +36,23 @@ class PnP_OutputInterface {
 		virtual uint8_t SetValue(float value) { return pOutputProvider->SetValue_OIP(providerIndex, value); }
 		virtual float GetValue() { return pOutputProvider->GetValue_OIP(providerIndex); }
 
-	protected:
+		virtual uint8_t AssignInterfaceProvider(PnP_OutputInterfaceProvider* pProvider, uint8_t index);
+
+		void SetPollingInterval(uint32_t ms);
+		uint32_t GetPollingInterval() { return pollingInterval; }
+		unsigned long millis() { return pOutputProvider->millis_OIP(); }
+		unsigned long micros() { return pOutputProvider->micros_OIP(); }
+		uint16_t GetUpdateFrequency() { return pOutputProvider->GetUpdateFrequency(providerIndex); }
+
+	private:
 		PnP_OutputInterfaceProvider* pOutputProvider;
 		uint8_t providerIndex;
 
-		virtual uint8_t AssignInterfaceProvider(PnP_OutputInterfaceProvider* pProvider, uint8_t index);
-		virtual uint8_t IsProcessingNeeded() { return 0; }
 		virtual uint8_t Process() { return EBF_OK; };
 		virtual uint8_t SetInitialValue(uint8_t value) { return EBF_OK; }
+
+		// Save requested polling interval for every interface, since output provider will query it
+		uint32_t pollingInterval;
 };
 
 #endif

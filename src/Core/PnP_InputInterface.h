@@ -11,8 +11,6 @@
 #include "../../../EventBasedFramework/src/Core/EBF_Core.h"
 #include "../../../EventBasedFramework/src/Core/EBF_Logic.h"
 #include "PnP_InputInterfaceProvider.h"
-#include "../Modules/PnP_Module_2Inputs.h"
-#include "../Modules/PnP_Module_4Inputs.h"
 
 class PnP_InputInterface {
 	public:
@@ -31,23 +29,31 @@ class PnP_InputInterface {
 
 		virtual InputInterface_Type GetType() = 0;
 
-		uint8_t GetValue() { return pInputProvider->GetValue_IIP(providerIndex); }
-		uint8_t GetLastValue() { return pInputProvider->GetLastValue_IIP(providerIndex); }
+		virtual uint8_t GetValue() { return pInputProvider->GetValue_IIP(providerIndex); }
+		virtual uint8_t GetLastValue() { return pInputProvider->GetLastValue_IIP(providerIndex); }
 
 		void SetUserData(uint32_t data) { this->userData = data; }
 		uint32_t GetUserData() { return this->userData; }
 
 		static PnP_InputInterface* GetCurrentInterface() { return pCurrentProvider->GetCurrentInterface(); }
 
-	protected:
+		virtual uint8_t AssignInterfaceProvider(PnP_InputInterfaceProvider* pProvider, uint8_t index);
+
+		void SetPollingInterval(uint32_t ms);
+		uint32_t GetPollingInterval() { return pollingInterval; }
+		unsigned long millis() { return pInputProvider->millis_IIP(); }
+		unsigned long micros() { return pInputProvider->micros_IIP(); }
+
+	private:
 		PnP_InputInterfaceProvider* pInputProvider;
 		uint8_t providerIndex;
 
 		virtual void ExecuteCallback() = 0;
-		virtual uint8_t AssignInterfaceProvider(PnP_InputInterfaceProvider* pProvider, uint8_t index);
-		virtual uint8_t IsProcessingNeeded() { return 0; }
 		virtual uint8_t Process() { return EBF_OK; };
 		virtual uint8_t SetInitialValue(uint8_t value) { return EBF_OK; }
+
+		// Save requested polling interval for every interface, since input provider will query it
+		uint32_t pollingInterval;
 
 		// User data
 		uint32_t userData;

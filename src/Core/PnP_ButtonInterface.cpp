@@ -23,7 +23,7 @@ PnP_ButtonInterface::ButtonEvent PnP_ButtonInterface::ProcessInput(uint8_t value
 		case BUTTON_STATE_PRESSED:
 			if (value == 1) {	// Button was released
 				this->state = BUTTON_STATE_RELEASED;
-				pInputProvider->SetPollingInterval_IIP(EBF_NO_POLLING);
+				PnP_InputInterface::SetPollingInterval(EBF_NO_POLLING);
 
 				return BUTTON_EVENT_RELEASE;
 			}
@@ -34,12 +34,12 @@ PnP_ButtonInterface::ButtonEvent PnP_ButtonInterface::ProcessInput(uint8_t value
 				// Wait for long-press timeout
 				this->state = BUTTON_STATE_WAITING_FOR_LONG_PRESS;
 
-				longPressStart = pInputProvider->millis_IIP();
+				longPressStart = PnP_InputInterface::millis();
 
 				// Process() function is called every polling interval or on change
 				// We will poll every 100mSec till the long press will be detected
-				if (longPressTime < pInputProvider->GetPollingInterval_IIP()) {
-					pInputProvider->SetPollingInterval_IIP(100);
+				if (longPressTime < PnP_InputInterface::GetPollingInterval()) {
+					PnP_InputInterface::SetPollingInterval(100);
 				}
 
 				return BUTTON_EVENT_PRESS;
@@ -50,17 +50,17 @@ PnP_ButtonInterface::ButtonEvent PnP_ButtonInterface::ProcessInput(uint8_t value
 			if (value == 1) {	// Button was released
 				this->state = BUTTON_STATE_RELEASED;
 
-				pInputProvider->SetPollingInterval_IIP(EBF_NO_POLLING);
+				PnP_InputInterface::SetPollingInterval(EBF_NO_POLLING);
 
 				return BUTTON_EVENT_RELEASE;
 			} else {
 				// Wait for long-press timeout
-				if((pInputProvider->millis_IIP() - longPressStart) >= longPressTime) {
+				if((PnP_InputInterface::millis() - longPressStart) >= longPressTime) {
 					// It's time...
 					this->state = BUTTON_STATE_PRESSED;
 
 					// Polling is no more needed
-					pInputProvider->SetPollingInterval_IIP(EBF_NO_POLLING);
+					PnP_InputInterface::SetPollingInterval(EBF_NO_POLLING);
 
 					return BUTTON_EVENT_LONG_PRESS;
 				}
@@ -73,7 +73,7 @@ PnP_ButtonInterface::ButtonEvent PnP_ButtonInterface::ProcessInput(uint8_t value
 }
 
 void PnP_ButtonInterface::ExecuteCallback() {
-	ExecuteCallbackEx(pInputProvider->GetLastValue_IIP(providerIndex));
+	ExecuteCallbackEx(PnP_InputInterface::GetLastValue());
 }
 
 void PnP_ButtonInterface::ExecuteCallbackEx(uint8_t value) {
@@ -98,17 +98,8 @@ void PnP_ButtonInterface::ExecuteCallbackEx(uint8_t value) {
 	}
 }
 
-uint8_t PnP_ButtonInterface::IsProcessingNeeded() {
-	// Button still need the Process calls from PnP module class
-	if (state == BUTTON_STATE_WAITING_FOR_LONG_PRESS) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
 uint8_t PnP_ButtonInterface::Process() {
-	ExecuteCallbackEx(pInputProvider->GetLastValue_IIP(providerIndex));
+	ExecuteCallbackEx(PnP_InputInterface::GetLastValue());
 
 	return EBF_OK;
 }

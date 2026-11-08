@@ -22,7 +22,7 @@ uint8_t PnP_ServoMotorInterface::SetValue(float value, uint16_t msDuration, uint
 		// Stop the interpolation if it was running
 		if (updatePeriod != 0) {
 			updatePeriod = 0;
-			pOutputProvider->SetPollingInterval_OIP(EBF_NO_POLLING);
+			PnP_OutputInterface::SetPollingInterval(EBF_NO_POLLING);
 		}
 	} else {
 		// Interpolation requested, save the parameters
@@ -53,10 +53,10 @@ uint8_t PnP_ServoMotorInterface::SetValue(float value, uint16_t msDuration, uint
 
 		if (updatePeriod == 0) {
 			// No update needed
-			pOutputProvider->SetPollingInterval_OIP(EBF_NO_POLLING);
+			PnP_OutputInterface::SetPollingInterval(EBF_NO_POLLING);
 		} else {
 			// Requesting Process() call every update period
-			pOutputProvider->SetPollingInterval_OIP(updatePeriod);
+			PnP_OutputInterface::SetPollingInterval(updatePeriod);
 		}
 
 		value = lastValue;
@@ -65,21 +65,21 @@ uint8_t PnP_ServoMotorInterface::SetValue(float value, uint16_t msDuration, uint
 	// Calculate the position after scaling
 	value = mapf(value, 0.0, 100.0, minBoundary, maxBoundary);
 
-	return pOutputProvider->SetValue_OIP(providerIndex, value);
+	return PnP_OutputInterface::SetValue(value);
 }
 
 // GetValue returns current status of the led (ON or OFF)
 float PnP_ServoMotorInterface::GetValue()
 {
 	// Get current position from the provider and scale it back
-	float value = pOutputProvider->GetValue_OIP(providerIndex);
+	float value = PnP_OutputInterface::GetValue();
 
 	return mapf(value, minBoundary, maxBoundary, 0.0, 100.0);
 }
 
 uint8_t PnP_ServoMotorInterface::SetScaleBoundaries(float minMs, float maxMs)
 {
-	float updatePeriod = 1000.0 / pOutputProvider->GetUpdateFrequency(providerIndex);
+	float updatePeriod = 1000.0 / PnP_OutputInterface::GetUpdateFrequency();
 
 	if (minMs < 0.0) minMs = 0.0;
 	if (minMs > updatePeriod) minMs = updatePeriod;
@@ -123,7 +123,7 @@ uint8_t PnP_ServoMotorInterface::Process()
 		return EBF_OK;
 	}
 
-	timePassed = micros() - effectStart;
+	timePassed = PnP_OutputInterface::micros() - effectStart;
 
 	if (timePassed > updatePeriod * 1000) {
 		// Next movement step
@@ -143,19 +143,19 @@ uint8_t PnP_ServoMotorInterface::Process()
 		// Calculate the position after scaling
 		setValue = mapf(lastValue, 0.0, 100.0, minBoundary, maxBoundary);
 
-		rc = pOutputProvider->SetValue_OIP(providerIndex, setValue);
+		rc = PnP_OutputInterface::SetValue(setValue);
 
 		if (updatePeriod == 0) {
 			// Reached the target, no more processing is needed
-			pOutputProvider->SetPollingInterval_OIP(EBF_NO_POLLING);
+			PnP_OutputInterface::SetPollingInterval(EBF_NO_POLLING);
 		} else {
 			// Request next processing after the update period
-			pOutputProvider->SetPollingInterval_OIP(updatePeriod);
+			PnP_OutputInterface::SetPollingInterval(updatePeriod);
 		}
 	} else {
 		// Update period didn't pass yet, processing was called before needed
 		// Set polling to the time left
-		pOutputProvider->SetPollingInterval_OIP(updatePeriod - timePassed / 1000);
+		PnP_OutputInterface::SetPollingInterval(updatePeriod - timePassed / 1000);
 	}
 
 	EBF_REPORT_AND_RETURN(rc);

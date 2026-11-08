@@ -6,6 +6,7 @@ PnP_InputInterface::PnP_InputInterface()
 {
 	this->pInputProvider = NULL;
 	this->providerIndex = 0;
+	this->pollingInterval = EBF_NO_POLLING;
 }
 
 uint8_t PnP_InputInterface::AssignInterfaceProvider(PnP_InputInterfaceProvider* pProvider, uint8_t index)
@@ -18,4 +19,11 @@ uint8_t PnP_InputInterface::AssignInterfaceProvider(PnP_InputInterfaceProvider* 
 	this->providerIndex = index;
 
 	return EBF_OK;
+}
+
+void PnP_InputInterface::SetPollingInterval(uint32_t ms)
+{
+	this->pollingInterval = ms;
+
+	pInputProvider->SetPollingInterval_IIP(ms);
 }

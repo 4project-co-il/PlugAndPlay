@@ -264,26 +264,25 @@ uint8_t PnP_Module_2Inputs::AssignInterface(uint8_t index, PnP_InputInterface* p
 // This is an override of the default function
 void PnP_Module_2Inputs::SetPollingInterval(uint32_t ms)
 {
-	// Since we have multiple interfaces that might need the polling at the same time
-	// we can't just change the value to NO_POLLING.
-	// Need to check if there is an interface instance that might still need a lower value
-	if (ms == EBF_NO_POLLING && isInterfaceAssigned != 0) {
+	uint32_t interval = EBF_NO_POLLING;
+
+	// Since we have multiple interfaces that might need different polling intrevals,
+	// we'll look for the lowest value and ignore the passed value
+	if (isInterfaceAssigned != 0) {
 		for (uint8_t i=0; i<numberOfInputs; i++) {
 			if (isInterfaceAssigned & 1<<i) {
 				PnP_InputInterface* pInput = GetAsInputInterface(i);
 
-				// The input instance still need processing
-				if (pInput->IsProcessingNeeded()) {
-					return;
+				// The instance still need processing
+				if (pInput != NULL && pInput->GetPollingInterval() < interval) {
+					interval = pInput->GetPollingInterval();
 				}
 			}
 		}
 	}
 
-	// Update the polling interval if requested time is lower than current or NO_POLLING is needed
-	if (EBF_HalInstance::GetPollingInterval() > ms || ms == EBF_NO_POLLING) {
-		EBF_HalInstance::SetPollingInterval(ms);
-	}
+	// Update the polling interval to the lowest found value
+	EBF_HalInstance::SetPollingInterval(interval);
 }
 
 // Returns input index that caused the callback function call

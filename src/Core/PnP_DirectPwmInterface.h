@@ -24,7 +24,6 @@ class PnP_DirectPwmInterface : public PnP_OutputInterface {
 		// The SetValue and GetValue are inherited from the PnP_OutputInterface class
 
 	protected:
-		uint8_t IsProcessingNeeded() { return 0; }
 		uint8_t Process() { return EBF_OK; }
 };
 
