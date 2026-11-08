@@ -48,6 +48,12 @@ uint8_t PnP_Module_1SimpleLed::Init()
 		EBF_REPORT_AND_RETURN(rc);
 	}
 
+	// Start with Off value
+	rc = Off();
+	if (rc != EBF_OK) {
+		EBF_REPORT_AND_RETURN(rc);
+	}
+
 	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
@@ -67,7 +73,8 @@ uint8_t PnP_Module_1SimpleLed::On()
 {
 	uint8_t rc;
 
-	rc = SetIntLine(pPnPI2C, 0, 1);
+	// Inverse logic for that module, 0 = On
+	rc = SetIntLine(pPnPI2C, 0, 0);
 
 	EBF_REPORT_AND_RETURN(rc);
 }
@@ -77,7 +84,8 @@ uint8_t PnP_Module_1SimpleLed::Off()
 {
 	uint8_t rc;
 
-	rc = SetIntLine(pPnPI2C, 0, 0);
+	// Inverse logic for that module, 1 = Off
+	rc = SetIntLine(pPnPI2C, 0, 1);
 
 	EBF_REPORT_AND_RETURN(rc);
 }
@@ -87,7 +95,12 @@ uint8_t PnP_Module_1SimpleLed::SetValue(uint8_t value)
 {
 	uint8_t rc;
 
-	rc = SetIntLine(pPnPI2C, 0, value);
+	// Inverse logic for that module, 0 = On, 1 = Off
+	if (value == 0) {
+		rc = SetIntLine(pPnPI2C, 0, 1);
+	} else {
+		rc = SetIntLine(pPnPI2C, 0, 0);
+	}
 
 	EBF_REPORT_AND_RETURN(rc);
 }
@@ -104,7 +117,12 @@ uint8_t PnP_Module_1SimpleLed::GetValue()
 		return 0;
 	}
 
-	return value;
+	// Inverse logic for that module, 0 = On, 1 = Off
+	if (value == 0) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 uint8_t PnP_Module_1SimpleLed::AssignInterface(PnP_OutputInterface* pIfInstance)
