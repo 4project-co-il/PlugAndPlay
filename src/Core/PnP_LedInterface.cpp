@@ -8,7 +8,7 @@ PnP_LedInterface::PnP_LedInterface()
 }
 
 // SetValue acts as an ON/OFF function, value == 0 will perform as OFF, any other value as ON
-uint8_t PnP_LedInterface::SetValue(uint8_t value)
+uint8_t PnP_LedInterface::SetValue(float value)
 {
 	uint8_t rc;
 

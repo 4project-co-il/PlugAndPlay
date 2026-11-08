@@ -32,8 +32,7 @@ class PnP_LedInterface : public PnP_OutputInterface {
 		uint8_t FadeIn(uint16_t msDuration, uint8_t msUpdate = 20);
 		uint8_t FadeOut(uint16_t msDuration, uint8_t msUpdate = 20);
 
-		uint8_t SetValue(uint8_t value);
-		uint8_t SetValue(float value) { return this->SetValue((uint8_t)value); }	// PnP_OutputInterface override
+		uint8_t SetValue(float value);
 		float GetValue();
 
 	protected:
