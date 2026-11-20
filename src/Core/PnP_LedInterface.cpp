@@ -102,13 +102,14 @@ uint8_t PnP_LedInterface::SetBrightness(float percent)
 	EBF_REPORT_AND_RETURN(rc);
 }
 
-// Turns on for msOn milliSeconds and stay off for msOff milliSeconds
-uint8_t PnP_LedInterface::Blink(uint16_t msOn, uint16_t msOff)
+// Turns on for msOn milliSeconds and stay off for msOff milliSeconds, for the repeatTimes times
+uint8_t PnP_LedInterface::Blink(uint16_t msOn, uint16_t msOff, uint8_t repeatTimes)
 {
 	uint8_t rc;
 
-	onDuration = msOn;
+	onDuration_FadingDuration = msOn;
 	offDuration = msOff;
+	fadeUpdatePeriod_repeatTimes = repeatTimes-1;
 
 	// Start from the BLINKING_ON state
 	state = LED_BLINKING_ON;
@@ -130,11 +131,11 @@ uint8_t PnP_LedInterface::FadeIn(uint16_t msDuration, uint8_t msUpdate)
 	uint8_t rc;
 
 	// Save the update period and set the polling interval accordingly
-	fadeUpdatePeriod = msUpdate;
-	PnP_OutputInterface::SetPollingInterval(fadeUpdatePeriod);
+	fadeUpdatePeriod_repeatTimes = msUpdate;
+	PnP_OutputInterface::SetPollingInterval(fadeUpdatePeriod_repeatTimes);
 
 	// Save total fading duration
-	onDuration = msDuration;
+	onDuration_FadingDuration = msDuration;
 
 	effectStart = PnP_OutputInterface::micros();
 	state = LED_FADING_IN;
@@ -152,11 +153,11 @@ uint8_t PnP_LedInterface::FadeOut(uint16_t msDuration, uint8_t msUpdate)
 	uint8_t rc;
 
 	// Save the update period and set the polling interval accordingly
-	fadeUpdatePeriod = msUpdate;
-	PnP_OutputInterface::SetPollingInterval(fadeUpdatePeriod);
+	fadeUpdatePeriod_repeatTimes = msUpdate;
+	PnP_OutputInterface::SetPollingInterval(fadeUpdatePeriod_repeatTimes);
 
 	// Save total fading duration
-	onDuration = msDuration;
+	onDuration_FadingDuration = msDuration;
 
 	effectStart = PnP_OutputInterface::micros();
 	state = LED_FADING_OUT;
@@ -184,19 +185,27 @@ uint8_t PnP_LedInterface::Process()
 	case LED_BLINKING_ON:
 		timePassed = PnP_OutputInterface::micros() - effectStart;
 
-		if (timePassed > onDuration * 1000) {
+		if (timePassed > onDuration_FadingDuration * 1000) {
 			// On duration passed, turn the led off and set the data for BLINKING_OFF state
 			rc = PnP_OutputInterface::SetValue(0.0);
 
-			state = LED_BLINKING_OFF;
-			effectStart = PnP_OutputInterface::micros();
+			// No more repeatitions for the blink
+			if (fadeUpdatePeriod_repeatTimes == 0) {
+				// Move to OFF state
+				state = LED_OFF;
 
-			// next polling is the duration of the OFF state
-			PnP_OutputInterface::SetPollingInterval(offDuration);
+				PnP_OutputInterface::SetPollingInterval(EBF_NO_POLLING);
+			} else {
+				state = LED_BLINKING_OFF;
+				effectStart = PnP_OutputInterface::micros();
+
+				// next polling is the duration of the OFF state
+				PnP_OutputInterface::SetPollingInterval(offDuration);
+			}
 		} else {
 			// On duration didn't pass yet, processing was called before needed
 			// Set polling to the time left
-			PnP_OutputInterface::SetPollingInterval(onDuration - timePassed / 1000);
+			PnP_OutputInterface::SetPollingInterval(onDuration_FadingDuration - timePassed / 1000);
 		}
 		break;
 
@@ -210,8 +219,13 @@ uint8_t PnP_LedInterface::Process()
 			state = LED_BLINKING_ON;
 			effectStart = PnP_OutputInterface::micros();
 
+			// Reduce one repeat count if it's not set to infinite repetition
+			if (fadeUpdatePeriod_repeatTimes != INFINITE_REPEAT) {
+				fadeUpdatePeriod_repeatTimes--;
+			}
+
 			// next polling is the duration of the OFF state
-			PnP_OutputInterface::SetPollingInterval(onDuration);
+			PnP_OutputInterface::SetPollingInterval(onDuration_FadingDuration);
 		} else {
 			// On duration didn't pass yet, processing was called before needed
 			// Set polling to the time left
@@ -223,11 +237,11 @@ uint8_t PnP_LedInterface::Process()
 		timePassed = (PnP_OutputInterface::micros() - effectStart) / 1000;	// in mSec
 
 		// Calculate the brightness after passed time
-		if (timePassed >= onDuration) {
+		if (timePassed >= onDuration_FadingDuration) {
 			// effect time passed, set to max brightness
 			fadingBrightness = brightness;
 		} else {
-			fadingBrightness = ((1.0 - (onDuration - timePassed) / (float)onDuration) * brightness);
+			fadingBrightness = ((1.0 - (onDuration_FadingDuration - timePassed) / (float)onDuration_FadingDuration) * brightness);
 		}
 
 		// Set current brightness level
@@ -240,10 +254,10 @@ uint8_t PnP_LedInterface::Process()
 			PnP_OutputInterface::SetPollingInterval(EBF_NO_POLLING);
 		} else {
 			// Need more time for fading
-			if (onDuration - timePassed > fadeUpdatePeriod) {
-				PnP_OutputInterface::SetPollingInterval(fadeUpdatePeriod);
+			if (onDuration_FadingDuration - timePassed > fadeUpdatePeriod_repeatTimes) {
+				PnP_OutputInterface::SetPollingInterval(fadeUpdatePeriod_repeatTimes);
 			} else {
-				PnP_OutputInterface::SetPollingInterval(onDuration - timePassed);
+				PnP_OutputInterface::SetPollingInterval(onDuration_FadingDuration - timePassed);
 			}
 		}
 		break;
@@ -252,11 +266,11 @@ uint8_t PnP_LedInterface::Process()
 		timePassed = (PnP_OutputInterface::micros() - effectStart) / 1000;	// in mSec
 
 		// Calculate the brightness after passed time
-		if (timePassed >= onDuration) {
+		if (timePassed >= onDuration_FadingDuration) {
 			// effect time passed, set to OFF
 			fadingBrightness = 0.0;
 		} else {
-			fadingBrightness = ((onDuration - timePassed) / (float)onDuration * brightness);
+			fadingBrightness = ((onDuration_FadingDuration - timePassed) / (float)onDuration_FadingDuration * brightness);
 		}
 
 		// Set current brightness level
@@ -269,10 +283,10 @@ uint8_t PnP_LedInterface::Process()
 			PnP_OutputInterface::SetPollingInterval(EBF_NO_POLLING);
 		} else {
 			// Need more time for fading
-			if (onDuration - timePassed > fadeUpdatePeriod) {
-				PnP_OutputInterface::SetPollingInterval(fadeUpdatePeriod);
+			if (onDuration_FadingDuration - timePassed > fadeUpdatePeriod_repeatTimes) {
+				PnP_OutputInterface::SetPollingInterval(fadeUpdatePeriod_repeatTimes);
 			} else {
-				PnP_OutputInterface::SetPollingInterval(onDuration - timePassed);
+				PnP_OutputInterface::SetPollingInterval(onDuration_FadingDuration - timePassed);
 			}
 		}
 		break;

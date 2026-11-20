@@ -27,7 +27,10 @@ class PnP_LedInterface : public PnP_OutputInterface {
 		uint8_t SetBrightness(float percent);
 		float GetBrightness() { return brightness; }
 
-		uint8_t Blink(uint16_t msOn, uint16_t msOff);
+		// Infinite repeat times = 0xFF (255)
+		const static uint8_t INFINITE_REPEAT = 255;
+
+		uint8_t Blink(uint16_t msOn, uint16_t msOff, uint8_t repeatTimes = INFINITE_REPEAT);
 
 		uint8_t FadeIn(uint16_t msDuration, uint8_t msUpdate = 20);
 		uint8_t FadeOut(uint16_t msDuration, uint8_t msUpdate = 20);
@@ -49,11 +52,11 @@ class PnP_LedInterface : public PnP_OutputInterface {
 		};
 
 		LedState state;
-		float brightness;			// 0%-100%
-		unsigned long effectStart;	// in micro-Sec
-		uint16_t onDuration;		// in milli-Sec, duration of the fading effect during fading
-		uint16_t offDuration;		// in milli-Sec
-		uint8_t fadeUpdatePeriod;	// in milli-Sec
+		float brightness;						// 0%-100%
+		unsigned long effectStart;				// in micro-Sec
+		uint16_t onDuration_FadingDuration;		// in milli-Sec, duration of the fading effect during fading
+		uint16_t offDuration;					// in milli-Sec
+		uint8_t fadeUpdatePeriod_repeatTimes;	// in milli-Sec
 
 };
 
