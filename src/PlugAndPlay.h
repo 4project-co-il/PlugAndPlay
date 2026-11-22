@@ -34,7 +34,7 @@
 #include "Modules/PnP_Module_2ButtonsInput.h"
 #include "Modules/PnP_Module_SparkFun_QWIIC_SerLCD.h"
 #include "Modules/PnP_Module_Seeed_Monochrome_GROVE_16x2_LCD.h"
-#include "Modules/PnP_Module_8Outputs.h"
+#include "Modules/PnP_Module_8Outputs_Servo.h"
 #include "Modules/PnP_Module_PowerConverter.h"
 #include "Modules/PnP_Module_1RGB_Led.h"
 

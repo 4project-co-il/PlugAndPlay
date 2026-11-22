@@ -1,5 +1,5 @@
-#ifndef __PNP_MODULE_8OUTPUTS_H__
-#define __PNP_MODULE_8OUTPUTS_H__
+#ifndef __PNP_MODULE_8OUTPUTS_SERVO_H__
+#define __PNP_MODULE_8OUTPUTS_SERVO_H__
 
 #include <Arduino.h>
 #if __has_include("Project_Config.h")
@@ -11,19 +11,19 @@
 #include "../../../EventBasedFramework/src/Core/EBF_HalInstance.h"
 #include "../../../EventBasedFramework/src/Core/EBF_Core.h"
 #include "../../../EventBasedFramework/src/Core/EBF_Logic.h"
-#include "../../../EventBasedFramework/src/Products/EBF_Module_8Outputs.h"
+#include "../../../EventBasedFramework/src/Products/EBF_Module_8Outputs_Servo.h"
 #include "../Core/PnP_PlugAndPlayDevice.h"
 #include "../Core/PnP_PlugAndPlayManager.h"
 #include "../Core/PnP_PlugAndPlayI2C.h"
 #include "../Core/PnP_OutputInterface.h"
 #include "../Core/PnP_OutputInterfaceProvider.h"
 
-class PnP_Module_8Outputs : public EBF_Module_8Outputs, public PnP_OutputInterfaceProvider, protected PnP_IntLineInterface {
+class PnP_Module_8Outputs_Servo : public EBF_Module_8Outputs_Servo, public PnP_OutputInterfaceProvider, protected PnP_IntLineInterface {
 	private:
-		EBF_DEBUG_MODULE_NAME("PnP_Module_8Outputs");
+		EBF_DEBUG_MODULE_NAME("PnP_Module_8Outputs_Servo");
 
 	public:
-		PnP_Module_8Outputs();
+		PnP_Module_8Outputs_Servo();
 
 		static const uint8_t numberOfOutputs = 8;
 

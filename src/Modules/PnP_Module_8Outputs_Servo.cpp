@@ -1,14 +1,14 @@
-#include "PnP_Module_8Outputs.h"
+#include "PnP_Module_8Outputs_Servo.h"
 
-PnP_Module_8Outputs::PnP_Module_8Outputs() : EBF_Module_8Outputs(NULL)
+PnP_Module_8Outputs_Servo::PnP_Module_8Outputs_Servo() : EBF_Module_8Outputs_Servo(NULL)
 {
 	this->type = HAL_Type::PnP_DEVICE;
-	this->id = PnP_DeviceId::PNP_ID_8OUTPUTS;
+	this->id = PnP_DeviceId::PNP_ID_8OUTPUTS_SERVO;
 
 	memset(pInterfaces, 0, sizeof(PnP_OutputInterface*) * numberOfOutputs);
 }
 
-uint8_t PnP_Module_8Outputs::Init()
+uint8_t PnP_Module_8Outputs_Servo::Init()
 {
 	uint8_t rc;
 	PnP_DeviceInfo deviceInfo;
@@ -27,14 +27,14 @@ uint8_t PnP_Module_8Outputs::Init()
 	chip.pI2C = pPnPI2C;
 
 	// Initialize the device
-	rc = EBF_Module_8Outputs::Init(deviceInfo.endpointData[endpointIndex].i2cAddress);
+	rc = EBF_Module_8Outputs_Servo::Init(deviceInfo.endpointData[endpointIndex].i2cAddress);
 	if (rc != EBF_OK) {
 		EBF_REPORT_AND_RETURN(rc);
 	}
 
 	// Fix type and ID after the EBF_Instance init
 	this->type = HAL_Type::PnP_DEVICE;
-	this->id = PnP_DeviceId::PNP_ID_8OUTPUTS;
+	this->id = PnP_DeviceId::PNP_ID_8OUTPUTS_SERVO;
 
 	// PnP is interrupt driven, no polling is needed
 	this->SetPollingInterval(EBF_NO_POLLING);
@@ -55,7 +55,7 @@ uint8_t PnP_Module_8Outputs::Init()
 	EBF_REPORT_AND_RETURN(rc);
 }
 
-uint8_t PnP_Module_8Outputs::Process()
+uint8_t PnP_Module_8Outputs_Servo::Process()
 {
 	uint8_t rc;
 
@@ -71,7 +71,7 @@ uint8_t PnP_Module_8Outputs::Process()
 	EBF_REPORT_AND_RETURN(EBF_OK);
 }
 
-uint8_t PnP_Module_8Outputs::AssignInterface(uint8_t index, PnP_OutputInterface* pIfInstance)
+uint8_t PnP_Module_8Outputs_Servo::AssignInterface(uint8_t index, PnP_OutputInterface* pIfInstance)
 {
 	uint8_t rc;
 
@@ -90,7 +90,7 @@ uint8_t PnP_Module_8Outputs::AssignInterface(uint8_t index, PnP_OutputInterface*
 	EBF_REPORT_AND_RETURN(rc);
 }
 
-uint8_t PnP_Module_8Outputs::SetValue_OIP(uint8_t index, float value)
+uint8_t PnP_Module_8Outputs_Servo::SetValue_OIP(uint8_t index, float value)
 {
 	uint8_t rc;
 
@@ -107,7 +107,7 @@ uint8_t PnP_Module_8Outputs::SetValue_OIP(uint8_t index, float value)
 	EBF_REPORT_AND_RETURN(rc);
 }
 
-float PnP_Module_8Outputs::GetValue_OIP(uint8_t index)
+float PnP_Module_8Outputs_Servo::GetValue_OIP(uint8_t index)
 {
 	if (index >= numberOfOutputs) {
 		EBF_REPORT_ERROR(EBF_INDEX_OUT_OF_BOUNDS);
@@ -118,7 +118,7 @@ float PnP_Module_8Outputs::GetValue_OIP(uint8_t index)
 }
 
 // This is an override of the default function
-void PnP_Module_8Outputs::SetPollingInterval(uint32_t ms)
+void PnP_Module_8Outputs_Servo::SetPollingInterval(uint32_t ms)
 {
 	uint32_t interval = EBF_NO_POLLING;
 
@@ -137,17 +137,17 @@ void PnP_Module_8Outputs::SetPollingInterval(uint32_t ms)
 	EBF_HalInstance::SetPollingInterval(interval);
 }
 
-uint8_t PnP_Module_8Outputs::Enable()
+uint8_t PnP_Module_8Outputs_Servo::Enable()
 {
 	return SetIntLine((PnP_PlugAndPlayI2C*)chip.pI2C, 0, 0);
 }
 
-uint8_t PnP_Module_8Outputs::Disable()
+uint8_t PnP_Module_8Outputs_Servo::Disable()
 {
 	return SetIntLine((PnP_PlugAndPlayI2C*)chip.pI2C, 0, 1);
 }
 
-uint8_t PnP_Module_8Outputs::IsEnabled()
+uint8_t PnP_Module_8Outputs_Servo::IsEnabled()
 {
 	uint8_t rc;
 	uint8_t value;
