@@ -44,6 +44,20 @@ uint8_t PnP_Module_2SimpleLeds::Init()
 	// Attach interrupt lines for that device
 	// Current device don't produce interrupts, but all the initializations are done in AssignInterruptLines
 	rc = pAssignedHub->AssignInterruptLines(pPnPI2C->GetPortNumber(), endpointIndex, deviceInfo);
+	if (rc != EBF_OK) {
+		EBF_REPORT_AND_RETURN(rc);
+	}
+
+	// Start with Off value
+	rc = Off(0);
+	if (rc != EBF_OK) {
+		EBF_REPORT_AND_RETURN(rc);
+	}
+
+	rc = Off(1);
+	if (rc != EBF_OK) {
+		EBF_REPORT_AND_RETURN(rc);
+	}
 
 	EBF_REPORT_AND_RETURN(rc);
 }
@@ -68,9 +82,18 @@ uint8_t PnP_Module_2SimpleLeds::Process()
 uint8_t PnP_Module_2SimpleLeds::SetValues(uint8_t values)
 {
 	uint8_t rc;
+	uint8_t setValue = 0;
 	PnP_PlugAndPlayHub *pHub = pPnPI2C->GetHub();
 
-	rc = pHub->SetIntLinesValue(pPnPI2C->GetPortNumber(), values & 0x03);
+	// Inverse logic for that module, 0 = On, 1 = Off
+	if ((values & 0x01) == 0) {
+		setValue |= 0x01;
+	}
+	if ((values & 0x02) == 0) {
+		setValue |= 0x02;
+	}
+
+	rc = pHub->SetIntLinesValue(pPnPI2C->GetPortNumber(), setValue & 0x03);
 
 	EBF_REPORT_AND_RETURN(rc);
 }
@@ -84,7 +107,8 @@ uint8_t PnP_Module_2SimpleLeds::On(uint8_t index)
 		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
-	rc = SetIntLine(pPnPI2C, index, 1);
+	// Inverse logic for that module, 0 = On
+	rc = SetIntLine(pPnPI2C, index, 0);
 
 	EBF_REPORT_AND_RETURN(rc);
 }
@@ -98,7 +122,8 @@ uint8_t PnP_Module_2SimpleLeds::Off(uint8_t index)
 		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
-	rc = SetIntLine(pPnPI2C, index, 0);
+	// Inverse logic for that module, 1 = Off
+	rc = SetIntLine(pPnPI2C, index, 1);
 
 	EBF_REPORT_AND_RETURN(rc);
 }
@@ -112,12 +137,17 @@ uint8_t PnP_Module_2SimpleLeds::SetValue(uint8_t index, uint8_t value)
 		EBF_REPORT_AND_RETURN(EBF_INDEX_OUT_OF_BOUNDS);
 	}
 
-	rc = SetIntLine(pPnPI2C, index, value);
+	// Inverse logic for that module, 0 = On, 1 = Off
+	if (value == 0) {
+		rc = SetIntLine(pPnPI2C, index, 1);
+	} else {
+		rc = SetIntLine(pPnPI2C, index, 0);
+	}
 
 	EBF_REPORT_AND_RETURN(rc);
 }
 
-// Returns 1 if output is HIGH, 0 if LOW
+// Returns 1 if output is ON, 0 if OFF
 uint8_t PnP_Module_2SimpleLeds::GetValue(uint8_t index)
 {
 	uint8_t rc;
@@ -134,7 +164,12 @@ uint8_t PnP_Module_2SimpleLeds::GetValue(uint8_t index)
 		return 0;
 	}
 
-	return value;
+	// Inverse logic for that module, 0 = On, 1 = Off
+	if (value == 0) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 uint8_t PnP_Module_2SimpleLeds::AssignInterface(uint8_t index, PnP_OutputInterface* pIfInstance)

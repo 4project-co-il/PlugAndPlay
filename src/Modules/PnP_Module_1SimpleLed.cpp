@@ -105,7 +105,7 @@ uint8_t PnP_Module_1SimpleLed::SetValue(uint8_t value)
 	EBF_REPORT_AND_RETURN(rc);
 }
 
-// Returns 1 if output is HIGH, 0 if LOW
+// Returns 1 if output is ON, 0 if OFF
 uint8_t PnP_Module_1SimpleLed::GetValue()
 {
 	uint8_t rc;

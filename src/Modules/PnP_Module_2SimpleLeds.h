@@ -44,8 +44,8 @@ class PnP_Module_2SimpleLeds : protected EBF_HalInstance, public PnP_OutputInter
 		}
 
 	private:
-		void SetPollingInterval(uint32_t ms);
 		uint8_t Process();
+		void SetPollingInterval(uint32_t ms);
 
 	private:
 		// Output interface
@@ -56,7 +56,7 @@ class PnP_Module_2SimpleLeds : protected EBF_HalInstance, public PnP_OutputInter
 		uint16_t GetUpdateFrequency(uint8_t index) { return 0xFFFF; }
 		unsigned long millis_OIP() { return this->millis(); }
 		unsigned long micros_OIP() { return this->micros(); }
-		void SetPollingInterval_OIP(uint32_t ms);
+		void SetPollingInterval_OIP(uint32_t ms) { this->SetPollingInterval(ms); }
 		uint32_t GetPollingInterval_OIP() { return this->GetPollingInterval(); }
 
 	private:
