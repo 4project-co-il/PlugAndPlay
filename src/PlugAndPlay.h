@@ -38,5 +38,6 @@
 #include "Modules/PnP_Module_PowerConverter.h"
 #include "Modules/PnP_Module_1RGB_Led.h"
 #include "Modules/PnP_Module_2Outputs_JST_SH_Adapter.h"
+#include "Modules/PnP_Module_2Outputs_5A.h"
 
 #endif

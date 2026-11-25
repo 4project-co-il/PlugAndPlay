@@ -50,6 +50,7 @@ typedef enum : uint32_t {
 	PNP_ID_TMP102_TEMPERATURE_SENSOR,		// Module with TMP102 temperature sensor
 	PNP_ID_1_RGB_LED_LP5815,				// Module with 1 RGB LED with LP5815 driver
 	PNP_ID_2OUTPUTS_JST_SH_ADAPTER,			// Module with 2x 3pin and 1x 4pin JST-SH connectors and power module connector for Pololu's relay modules
+	PNP_ID_2OUTPUTS_5A,						// Module with 2x terminal screw connectors that can deliver up to 5A from the power module connector
 } PnP_DeviceId;
 
 // 2 bytes

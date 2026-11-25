@@ -15,6 +15,7 @@
 #include "../Modules/PnP_Module_2SimpleLeds.h"
 #include "../Modules/PnP_Module_8Outputs_Servo.h"
 #include "../Modules/PnP_Module_2Outputs_JST_SH_Adapter.h"
+#include "../Modules/PnP_Module_2Outputs_5A.h"
 
 class PnP_OutputInterface {
 	public:
@@ -22,6 +23,7 @@ class PnP_OutputInterface {
 		friend class PnP_Module_2SimpleLeds;
 		friend class PnP_Module_8Outputs_Servo;
 		friend class PnP_Module_2Outputs_JST_SH_Adapter;
+		friend class PnP_Module_2Outputs_5A;
 
 		PnP_OutputInterface();
 
