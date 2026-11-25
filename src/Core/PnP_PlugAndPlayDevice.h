@@ -49,6 +49,7 @@ typedef enum : uint32_t {
 	PNP_ID_POWER_CONVERTER_CONTROL,			// Power conversion module, control over the enable line and feedback with "power-good" line
 	PNP_ID_TMP102_TEMPERATURE_SENSOR,		// Module with TMP102 temperature sensor
 	PNP_ID_1_RGB_LED_LP5815,				// Module with 1 RGB LED with LP5815 driver
+	PNP_ID_2OUTPUTS_JST_SH_ADAPTER,			// Module with 2x 3pin and 1x 4pin JST-SH connectors and power module connector for Pololu's relay modules
 } PnP_DeviceId;
 
 // 2 bytes

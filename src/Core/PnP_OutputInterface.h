@@ -14,12 +14,14 @@
 #include "../Modules/PnP_Module_1SimpleLed.h"
 #include "../Modules/PnP_Module_2SimpleLeds.h"
 #include "../Modules/PnP_Module_8Outputs_Servo.h"
+#include "../Modules/PnP_Module_2Outputs_JST_SH_Adapter.h"
 
 class PnP_OutputInterface {
 	public:
 		friend class PnP_Module_1SimpleLed;
 		friend class PnP_Module_2SimpleLeds;
 		friend class PnP_Module_8Outputs_Servo;
+		friend class PnP_Module_2Outputs_JST_SH_Adapter;
 
 		PnP_OutputInterface();
 
